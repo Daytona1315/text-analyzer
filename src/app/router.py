@@ -1,11 +1,7 @@
-import pandas as pd
-import altair as alt
-
 from flask import (
     Blueprint,
     render_template,
     request,
-    jsonify,
 )
 
 from src.app.service import count_text
