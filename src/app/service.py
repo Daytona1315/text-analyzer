@@ -4,7 +4,7 @@ import string
 
 def count_text(text: str) -> dict:
     """Returns a dictionary with words, punctuation, numbers lists and their counts at the end"""
-    splitted = text.split(" ")
+    splitted = text.split()
     dictionary = {
         'words': [],
         'punctuation': [],
