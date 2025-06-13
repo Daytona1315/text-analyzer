@@ -36,3 +36,7 @@ def count_text(text: str) -> dict:
     dictionary['spaces'] = [spaces if spaces > 0 else 0]
 
     return dictionary
+
+
+def file_upload():
+    pass

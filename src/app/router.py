@@ -4,7 +4,8 @@ from flask import (
     request,
 )
 
-from src.app.service import count_text
+from app.service import file_upload
+from src.app.service import count_text, file_upload
 
 
 router = Blueprint('items', __name__)
@@ -23,3 +24,9 @@ def analyze_text():
         "partials/result.html",
         dictionary=dictionary
     )
+
+
+@router.route("/upload", methods=["POST"])
+def upload_file():
+    if request.method == 'POST':
+        result = file_upload()
