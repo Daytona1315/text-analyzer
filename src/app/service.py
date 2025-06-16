@@ -1,5 +1,8 @@
 import re
 import string
+import docx
+import PyPDF2
+import textract
 
 
 ALLOWED_EXTENSIONS = ['txt', 'doc', 'docx', 'pdf']
@@ -8,6 +11,27 @@ ALLOWED_EXTENSIONS = ['txt', 'doc', 'docx', 'pdf']
 def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+def extract_text(file_path, extension):
+    match extension:
+        case '.txt':
+            with open(file_path, 'r', encoding='utf-8') as f:
+                return f.read()
+        case '.docx':
+            doc = docx.Document(file_path)
+            return '\n'.join(para.text for para in doc.paragraphs)
+        case '.pdf':
+            text = ''
+            with open(file_path, 'rb') as f:
+                reader = PyPDF2.PdfReader(f)
+                for page in reader.pages:
+                    text += page.extract_text() or ''
+            return text
+        case '.doc':
+            return textract.process(file_path).decode('utf-8')
+        case _:
+            return ''
 
 
 def count_text(text: str) -> dict:
