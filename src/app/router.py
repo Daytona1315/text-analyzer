@@ -4,7 +4,7 @@ from flask import (
     request,
 )
 
-from app.service import file_upload
+from src.app.service import file_upload
 from src.app.service import count_text, file_upload
 
 
