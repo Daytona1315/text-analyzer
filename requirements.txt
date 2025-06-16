@@ -8,7 +8,7 @@ compressed-rtf==1.0.7 ; python_version >= "3.11" and python_version < "4.0"
 docx2txt==0.9 ; python_version >= "3.11" and python_version < "4.0"
 dotenv==0.9.9 ; python_version >= "3.11" and python_version < "4.0"
 ebcdic==1.1.1 ; python_version >= "3.11" and python_version < "4.0"
-extract-msg==0.29.0 ; python_version >= "3.11" and python_version < "4.0"
+extract-msg
 flask==3.1.1 ; python_version >= "3.11" and python_version < "4.0"
 gunicorn==23.0.0 ; python_version >= "3.11" and python_version < "4.0"
 imapclient==2.1.0 ; python_version >= "3.11" and python_version < "4.0"
