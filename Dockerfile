@@ -4,7 +4,7 @@ WORKDIR /app
 
 COPY requirements.txt /app/
 
-RUN python -m pip install --upgrade pip
+RUN python -m pip install --upgrade pip==23.2.1
 
 RUN pip install -r requirements.txt
 
