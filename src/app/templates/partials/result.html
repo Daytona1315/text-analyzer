@@ -1,8 +1,27 @@
 <div class="container mt-2 mb-2">
     <div class="card shadow p-4">
-        <p>Слов: {{dictionary.words[-1]}}</p>
-        <p>Чисел: {{dictionary.numbers[-1]}}</p>
-        <p>Знаков пунктуации: {{dictionary.punctuation[-1]}}</p>
-        <p>Пробелов: {{dictionary.spaces[0]}}</p>
+        <div class="mt-4 mb-4 p-2 alert alert-primary" role="alert">"{{dictionary.preview}} ... "</div>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">Symbols</th>
+                    <th scope="col">Words</th>
+                    <th scope="col">Numbers</th>
+                    <th scope="col">Punctuation</th>
+                    <th scope="col">Spaces</th>
+                </tr>
+            </thead>
+            <tbody class="display-6">
+                <tr>
+                    <th scope="row">{{dictionary.symbols[-1]}}</th>
+                    <th scope="row">{{dictionary.words[-1]}}</th>
+                    <th scope="row">{{dictionary.numbers[-1]}}</th>
+                    <th scope="row">{{dictionary.punctuation[-1]}}</th>
+                    <th scope="row">{{dictionary.spaces[-1]}}</th>
+                </tr>
+            </tbody>
+        </table>
+
     </div>
 </div>
