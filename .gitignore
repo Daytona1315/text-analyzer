@@ -4,3 +4,4 @@ poetry.toml
 poetry.lock
 pyproject.toml
 src/app/__pycache__/
+src/app/files/*
