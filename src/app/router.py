@@ -2,7 +2,7 @@ import os
 from flask import (
     Blueprint, render_template,
     request, redirect,
-    current_app, url_for,
+    current_app,
 )
 from werkzeug.utils import secure_filename
 
@@ -46,10 +46,9 @@ def upload_file():
             file.save(file_path)
             extension = os.path.splitext(filename)[1].lower()
             text = extract_text(file_path, extension)
-            print(type(text))
             if not text:
                 return 'Unsupported file type or empty file', 400
 
             dictionary = count_text(text)
             return render_template('partials/result.html', dictionary=dictionary)
-    return render_template("index.html")
+    return render_template("index.html"), 200
