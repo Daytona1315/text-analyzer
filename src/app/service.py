@@ -7,11 +7,12 @@ import textract
 from flask import (
     Request,
     render_template,
-    current_app,
+    current_app, session,
 )
 from werkzeug.utils import secure_filename
 
 from src.app.main import allowed_extensions
+from src.app.custom_exception import FileProcessingError
 
 
 def allowed_file(filename) -> bool:
@@ -27,23 +28,31 @@ def load_file(request: Request) -> tuple:
     Checks the file and secures it. Returns path to file and its extension.
     """
     if 'file' not in request.files:
-        return render_template('partials/error.html')
+        raise FileProcessingError(message="No file")
     file = request.files['file']
     if file.filename == '':
-        print('No selected file')
-        return render_template('partials/error.html')
+        raise FileProcessingError(message="No file selected")
     if file and allowed_file(file.filename):
-        filename = secure_filename(file.filename)
+        user_id = session['user_id']
+        filename = f"{user_id}_{secure_filename(file.filename)}"
         file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
         file.save(file_path)
+        # safely update session list to track uploaded files without duplicates,
+        # ensuring Flask detects the change by replacing the list in session.
+        files = session.get('files', [])
+        if filename not in files:
+            files.append(filename)
+            session['files'] = files
+
         extension = os.path.splitext(filename)[1].lower()
+        print(session)
         return file_path, extension
-    return render_template('partials/error.html')
+    raise FileProcessingError(message="File type not allowed")
 
 
 class TextService:
     """
-    Contains necessary methods.
+    Contains necessary methods related to text processing.
     """
     @classmethod
     def extract_text(cls, file_path: str, extension: str):
@@ -72,7 +81,9 @@ class TextService:
     @classmethod
     def count_text(cls, text: str) -> dict:
         """
-        Returns a dictionary with words, punctuation, numbers lists and their counts at the end.
+        Returns a dictionary with the lists of words, punctuation, numbers
+        and their counts at the end of every list. For example:
+        ['me', 'love', 'code', 3]
         """
         splitted = text.split()
         dictionary = {
@@ -82,8 +93,7 @@ class TextService:
             'punctuation': [],
             'numbers': []
         }
-        # Main cycle
-        for word in splitted:
+        for word in splitted:  # main cycle
             if not word:
                 continue  # skipping blank strings
             if word.isdigit():
@@ -98,21 +108,16 @@ class TextService:
                         dictionary['words'].append(w)
             else:
                 dictionary['words'].append(word)
-        # Counting symbols
-        for symbol in text.strip():
+        for symbol in text.strip():  # counting symbols
             if symbol == " " or symbol == "/n":
                 continue
             else:
                 dictionary['symbols'].append(symbol)
-        # Adding quantity of each category to the end of every list
-        for key in dictionary:
+        for key in dictionary:  # adding quantity of each category to the end of every list
             count = len(dictionary[key])
             dictionary[key].append(count if count > 0 else 0)
-        # Counting spaces
-        spaces: int = text.count(" ")
+        spaces: int = text.count(" ")  # counting spaces
         dictionary['spaces'] = [spaces if spaces > 0 else 0]
-        # Adding preview string
-        preview = text[:170]
+        preview = text[:140]  # adding preview string
         dictionary['preview'] = preview
-
         return dictionary

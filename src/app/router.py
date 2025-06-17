@@ -8,6 +8,7 @@ from src.app.service import (
     TextService,
     load_file,
 )
+from src.app.custom_exception import FileProcessingError
 
 
 router = Blueprint('items', __name__)
@@ -30,12 +31,18 @@ def analyze_text():
 
 @router.route("/upload", methods=["POST"])
 def upload_file():
-    file_path, extension = load_file(request)
-    text = TextService.extract_text(
-        file_path=file_path,
-        extension=extension,
-    )
-    dictionary = TextService.count_text(text)
-    return render_template(
-        'partials/result.html',
-        dictionary=dictionary)
+    try:
+        file_path, extension = load_file(request)
+        text = TextService.extract_text(
+            file_path=file_path,
+            extension=extension,
+        )
+        dictionary = TextService.count_text(text)
+        return render_template(
+            'partials/result.html',
+            dictionary=dictionary)
+    except FileProcessingError as e:
+        return render_template(
+            'partials/error.html',
+            message=e.message
+        )

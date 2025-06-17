@@ -43,10 +43,6 @@
                 <small>
                     Click and choose the file to analyze (2 MB max, .txt .doc .docx. pdf)
                 </small>
-
-                <!-- Here possible error appears -->
-                <div id="error"></div>
-
                 <form hx-post="/upload" hx-target="#result" hx-indicator="#loading" enctype="multipart/form-data">
                   <input type="file" name="file">
                   <button type="submit" class="btn btn-primary">Upload</button>
@@ -60,6 +56,7 @@
     <div id="result"></div>
 
 </body>
+
 <script>
     const textarea = document.getElementById('textarea');
     const wordCount = document.getElementById('word-count');
