@@ -1,16 +1,14 @@
-import os
 from flask import (
-    Blueprint, render_template,
-    request, redirect,
-    current_app,
+    Blueprint,
+    render_template,
+    request,
 )
-from werkzeug.utils import secure_filename
 
 from src.app.service import (
-    count_text,
-    allowed_file,
-    extract_text,
+    TextService,
+    load_file,
 )
+
 
 router = Blueprint('items', __name__)
 
@@ -23,32 +21,21 @@ def root():
 @router.route("/analyze", methods=["POST"])
 def analyze_text():
     text = request.form.get("text")
-    dictionary = count_text(text)
+    dictionary = TextService.count_text(text)
     return render_template(
         "partials/result.html",
         dictionary=dictionary
     )
 
 
-@router.route("/upload", methods=["GET", "POST"])
+@router.route("/upload", methods=["POST"])
 def upload_file():
-    if request.method == 'POST':
-        if 'file' not in request.files:
-            print('No file')
-            return redirect(location="/")
-        file = request.files['file']
-        if file.filename == '':
-            print('No selected file')
-            return redirect(location="/")
-        if file and allowed_file(file.filename):
-            filename = secure_filename(file.filename)
-            file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
-            file.save(file_path)
-            extension = os.path.splitext(filename)[1].lower()
-            text = extract_text(file_path, extension)
-            if not text:
-                return 'Unsupported file type or empty file', 400
-
-            dictionary = count_text(text)
-            return render_template('partials/result.html', dictionary=dictionary)
-    return render_template("index.html"), 200
+    file_path, extension = load_file(request)
+    text = TextService.extract_text(
+        file_path=file_path,
+        extension=extension,
+    )
+    dictionary = TextService.count_text(text)
+    return render_template(
+        'partials/result.html',
+        dictionary=dictionary)
