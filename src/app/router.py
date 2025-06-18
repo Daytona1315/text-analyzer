@@ -8,7 +8,7 @@ from src.app.service import (
     TextService,
     load_file,
 )
-from app.utils.custom_exception import FileProcessingError
+from src.app.utils.custom_exception import FileProcessingError
 
 
 router = Blueprint('items', __name__)
