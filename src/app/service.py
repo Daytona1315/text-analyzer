@@ -43,6 +43,7 @@ def load_file(request: Request) -> tuple:
         user_id = session['user_id'][0]
         filename = f"{user_id}_{secure_filename(file.filename)}"
         file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
+
         file.save(file_path)
         # safely update session list to track uploaded files without duplicates,
         # ensuring Flask detects the change by replacing the list in session.
