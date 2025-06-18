@@ -11,7 +11,7 @@ from flask import (
 from werkzeug.utils import secure_filename
 
 from src.app.utils.env_loader import allowed_extensions
-from app.utils.custom_exception import FileProcessingError
+from src.app.utils.custom_exception import FileProcessingError
 
 
 def touch(path: str) -> None:
