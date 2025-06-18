@@ -6,7 +6,8 @@ import PyPDF2
 import textract
 from flask import (
     Request,
-    current_app, session,
+    current_app,
+    session,
 )
 from werkzeug.utils import secure_filename
 
@@ -87,45 +88,45 @@ class TextService:
                 return ''
 
     @classmethod
-    def count_text(cls, text: str) -> dict:
+    def analyze_text(cls, text: str) -> dict:
         """
-        Returns a dictionary with the lists of words, punctuation, numbers
-        and their counts at the end of every list. For example:
-        ['me', 'love', 'code', 3]
+        Analyzes a text string to extract lists and counts of its components.
+
+        Args:
+            text: The input string to analyze.
+
+        Returns:
+            A dictionary with the analysis results.
         """
-        splitted = text.split()
-        dictionary = {
-            'preview': [],
-            'symbols': [],
-            'words': [],
-            'punctuation': [],
-            'numbers': []
+
+        # Find all sequences of letters (words).
+        # This regex handles words with hyphens or apostrophes inside.
+        words = re.findall(r'[a-zA-Zа-яА-ЯёЁ]+(?:[-’\'][a-zA-Zа-яА-ЯёЁ]+)*', text)
+        # find all sequences of digits (numbers).
+        numbers = re.findall(r'\d+', text)
+        # find all standard punctuation characters.
+        punctuation_chars = [char for char in text if char in string.punctuation]
+        # count all whitespace characters (spaces, tabs, newlines).
+        whitespace_count = len(re.findall(r'\s', text))
+        # calculate non-whitespace character count.
+        chars_no_spaces_count = len(text) - whitespace_count
+        result = {
+            'preview': text[:140] + '...' if len(text) > 140 else text,
+            # core metrics of the text.
+            'metrics': {
+                'characters_no_whitespace': chars_no_spaces_count,
+                'characters_with_whitespace': len(text),
+                'words': len(words),
+                'numbers': len(numbers),
+                'punctuation': len(punctuation_chars),
+                'whitespace': whitespace_count
+            },
+            # lists of found items.
+            'lists': {
+                'words': words,
+                'numbers': numbers,
+                'punctuation': punctuation_chars
+            }
         }
-        for word in splitted:  # main cycle
-            if not word:
-                continue  # skipping blank strings
-            if word.isdigit():
-                dictionary['numbers'].append(word)
-            elif word and re.match(f'[{re.escape(string.punctuation)}]$', word[-1]):
-                dictionary['punctuation'].append(word[-1])
-                w = word[:-1]
-                if w:  # if the part of word remained
-                    if w.isdigit():
-                        dictionary['numbers'].append(w)
-                    else:
-                        dictionary['words'].append(w)
-            else:
-                dictionary['words'].append(word)
-        for symbol in text.strip():  # counting symbols
-            if symbol == " " or symbol == "/n":
-                continue
-            else:
-                dictionary['symbols'].append(symbol)
-        for key in dictionary:  # adding quantity of each category to the end of every list
-            count = len(dictionary[key])
-            dictionary[key].append(count if count > 0 else 0)
-        spaces: int = text.count(" ")  # counting spaces
-        dictionary['spaces'] = [spaces if spaces > 0 else 0]
-        preview: str = text[:140]  # adding preview string
-        dictionary['preview'] = [preview]
-        return dictionary
+
+        return result

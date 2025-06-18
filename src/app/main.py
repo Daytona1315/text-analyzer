@@ -44,8 +44,6 @@ def create_app():
         closing the browser the session will be closed as well.
         """
         session.permanent = is_session_permanent
-        print(type(is_session_permanent))
-        print(is_session_permanent)
         return None
 
     @app.before_request

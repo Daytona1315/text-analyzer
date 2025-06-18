@@ -22,10 +22,10 @@ def root():
 @router.route("/analyze", methods=["POST"])
 def analyze_text():
     text = request.form.get("text")
-    dictionary = TextService.count_text(text)
+    result = TextService.analyze_text(text)
     return render_template(
         "partials/result.html",
-        dictionary=dictionary
+        result=result
     )
 
 
@@ -37,10 +37,10 @@ def upload_file():
             file_path=file_path,
             extension=extension,
         )
-        dictionary = TextService.count_text(text)
+        result = TextService.analyze_text(text)
         return render_template(
             'partials/result.html',
-            dictionary=dictionary)
+            result=result)
     except FileProcessingError as e:
         return render_template(
             'partials/error.html',
