@@ -19,7 +19,7 @@ file_cleanup_threshold: int = int(os.getenv('FILE_CLEANUP_THRESHOLD'))
 
 file_cleanup_sleep: int = int(os.getenv('FILE_CLEANUP_SLEEP'))
 
-is_session_permanent: bool = strtobool(os.getenv('IS_SESSION_PERMANENT'))
+is_session_permanent: bool = strtobool(os.getenv('IS_SESSION_PERMANENT'))  # validated by strtobool.py
 
 session_lifetime: int = int(os.getenv('SESSION_LIFETIME'))  # value in minutes (1 = one minute)
 
