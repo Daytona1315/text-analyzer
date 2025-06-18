@@ -8,46 +8,44 @@
     <script src="https://unpkg.com/htmx.org@1.9.10"></script>
     <title>Text analyzer</title>
 </head>
-<body class="bd-light">
+<body class="bg-body-tertiary">
 
     <!-- Text handwriting  -->
-    <div class="container mt-2 mb-2">
-        <div class="card shadow p-4">
-            <h2 class="mb-4 text-center text-body-emphasis display-6 fw-bold">
-                Text analyzer
+    <div class="container my-4">
+        <div class="card shadow-sm border-0 rounded-4 p-4">
+            <h2 class="text-center text-primary fw-semibold mb-4 display-6">
+                Text Analyzer
             </h2>
-            <form hx-post="/analyze" hx-target="#result" hx-swap="innerHTML">
-                <div class="mb-3" align="center">
-                    <textarea
-                            class="border border-primary"
-                            style="width: 90%; min-height: 300px"
-                            id="textarea"
-                            name="text"
-                            maxlength={{maxWords}}
-                            required></textarea>
-                    <div id="word-count" style="margin-top: 10px;">
-                        0 / 10000
-                    </div>
+            <form hx-post="/analyze" hx-target="#result" hx-swap="innerHTML" class="d-flex flex-column gap-3">
+                <textarea
+                    class="form-control border-primary rounded-3"
+                    style="min-height: 300px;"
+                    id="textarea"
+                    name="text"
+                    maxlength="{{maxWords}}"
+                    required></textarea>
+                <div id="word-count" class="text-end text-muted small">
+                    0 / 10000
                 </div>
-                <button type="submit" id="submit-btn" class="btn btn-secondary w-100" disabled>
+                <button type="submit" id="submit-btn" class="btn btn-primary w-100 rounded-pill" disabled>
                     Count!
                 </button>
             </form>
         </div>
     </div>
 
-    <!-- File upload -->
-    <div class="container mt-2 mb-2">
-        <div class="card shadow p-4 align-items-center text-center">
-            <div class="p-4">
-                <small>
-                    Click and choose the file to analyze (2 MB max, .txt .doc .docx. pdf)
-                </small>
-                <form hx-post="/upload" hx-target="#result" hx-indicator="#loading" enctype="multipart/form-data">
-                  <input type="file" name="file">
-                  <button type="submit" class="btn btn-primary">Upload</button>
+    <!-- File upload (modern version) -->
+    <div class="container my-4">
+        <div class="card shadow-sm border-0 rounded-4">
+            <div class="card-body text-center">
+                <p class="text-muted mb-3 small">
+                    Choose a file to analyze (max 2 MB, formats: .txt, .doc, .docx, .pdf)
+                </p>
+                <form hx-post="/upload" hx-target="#result" hx-indicator="#loading" enctype="multipart/form-data" class="d-flex flex-column align-items-center gap-3">
+                    <input type="file" name="file" class="form-control w-auto" required>
+                    <button type="submit" class="btn btn-primary rounded-pill px-4">Upload</button>
                 </form>
-                <div id="loading" class="htmx-indicator spinner-border text-primary m-3" role="status"></div>
+                <div id="loading" class="htmx-indicator spinner-border text-primary mt-3" role="status"></div>
             </div>
         </div>
     </div>

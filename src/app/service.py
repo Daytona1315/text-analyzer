@@ -6,18 +6,25 @@ import PyPDF2
 import textract
 from flask import (
     Request,
-    render_template,
     current_app, session,
 )
 from werkzeug.utils import secure_filename
 
-from src.app.main import allowed_extensions
-from src.app.custom_exception import FileProcessingError
+from src.app.utils.env_loader import allowed_extensions
+from app.utils.custom_exception import FileProcessingError
+
+
+def touch(path: str) -> None:
+    """
+    Refresh file's 'mtime' to current time to prevent cleanup.
+    It is used in extract_text().
+    """
+    os.utime(path, None)
 
 
 def allowed_file(filename) -> bool:
     """
-    Prevents from filename injections or smth, flask docs recommends to do this.
+    Prevents from filename injections or smth, flask docs recommend to do this.
     """
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in allowed_extensions
@@ -33,7 +40,7 @@ def load_file(request: Request) -> tuple:
     if file.filename == '':
         raise FileProcessingError(message="No file selected")
     if file and allowed_file(file.filename):
-        user_id = session['user_id']
+        user_id = session['user_id'][0]
         filename = f"{user_id}_{secure_filename(file.filename)}"
         file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
         file.save(file_path)
@@ -45,7 +52,6 @@ def load_file(request: Request) -> tuple:
             session['files'] = files
 
         extension = os.path.splitext(filename)[1].lower()
-        print(session)
         return file_path, extension
     raise FileProcessingError(message="File type not allowed")
 
@@ -59,6 +65,7 @@ class TextService:
         """
         Uses suitable module to extract text from file.
         """
+        touch(file_path)
         match extension:
             case '.txt':
                 with open(file_path, 'r', encoding='utf-8') as f:
@@ -118,6 +125,6 @@ class TextService:
             dictionary[key].append(count if count > 0 else 0)
         spaces: int = text.count(" ")  # counting spaces
         dictionary['spaces'] = [spaces if spaces > 0 else 0]
-        preview = text[:140]  # adding preview string
-        dictionary['preview'] = preview
+        preview: str = text[:140]  # adding preview string
+        dictionary['preview'] = [preview]
         return dictionary
