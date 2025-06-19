@@ -1,6 +1,7 @@
 FROM python:3.12-slim
 
 ENV PYTHONPATH="/app/src"
+ENV REDIS_HOST=redis
 
 WORKDIR /app
 
