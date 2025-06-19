@@ -1,5 +1,4 @@
 import redis
-from PIL.DdsImagePlugin import item1
 
 from src.app.utils.env_loader import Config
 
