@@ -41,7 +41,12 @@
                 <p class="text-muted mb-3 small">
                     Choose a file to analyze (max 2 MB, formats: .txt, .doc, .docx, .pdf)
                 </p>
-                <form hx-post="/upload" hx-target="#result" hx-indicator="#loading" enctype="multipart/form-data" class="d-flex flex-column align-items-center gap-3">
+                <form
+                        hx-post="/upload"
+                        hx-target="#result"
+                        hx-indicator="#loading"
+                        enctype="multipart/form-data"
+                        class="d-flex flex-column align-items-center gap-3">
                     <input type="file" name="file" class="form-control w-auto" required>
                     <button type="submit" class="btn btn-primary rounded-pill px-4">Upload</button>
                 </form>
