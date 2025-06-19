@@ -1,14 +1,9 @@
 import os
 
-from dotenv import load_dotenv
-
 from src.app.utils.strtobool import strtobool
 
 
 # Separate file to load all the dependencies
-
-load_dotenv()
-
 
 class Config:
     allowed_extensions: list = os.getenv('ALLOWED_EXTENSIONS').split(",")
