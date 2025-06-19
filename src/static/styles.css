@@ -1,0 +1,12 @@
+:root {
+    --blue-200: #9ec5fe;
+    --indigo-200: #6610f2;
+    --purple-200: #6542c1;
+}
+
+.gradient-text {
+  background: linear-gradient(90deg, var(--blue-200), var(--purple-200));
+  display: inline-block;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}

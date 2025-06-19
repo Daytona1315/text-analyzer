@@ -6,24 +6,27 @@ from flask import (
     session,
     render_template,
 )
+from flask_session import Session
 from werkzeug.exceptions import RequestEntityTooLarge
 
 from src.app.utils.cleanup import cleanup_old_files
-from src.app.utils.env_loader import (
-    secret_key,
-    upload_folder,
-    session_lifetime,
-    max_file_size,
-    is_session_permanent,
-)
+from src.app.utils.env_loader import Config
+from src.db.redis import get_redis_connection
 
 
 def create_app():
     app = Flask(__name__)
-    app.secret_key = secret_key
-    app.config['MAX_CONTENT_LENGTH'] = max_file_size
-    app.config['UPLOAD_FOLDER'] = upload_folder
-    app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=session_lifetime)
+    app.secret_key = Config.secret_key
+    app.config['MAX_CONTENT_LENGTH'] = Config.max_file_size
+    app.config['UPLOAD_FOLDER'] = Config.upload_folder
+    app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=Config.session_lifetime)
+
+    # redis for sessions (db=0)
+    app.config['SESSION_TYPE'] = 'redis'
+    app.config['SESSION_REDIS'] = get_redis_connection(db=0)
+    Session(app)
+    # redis for history (db=1)
+    app.redis_history = get_redis_connection(db=1)
 
     from src.app.router import router
     app.register_blueprint(router)
@@ -43,7 +46,7 @@ def create_app():
         permanent or not. By default, it is not, so after
         closing the browser the session will be closed as well.
         """
-        session.permanent = is_session_permanent
+        session.permanent = Config.is_session_permanent
         return None
 
     @app.before_request

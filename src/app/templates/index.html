@@ -13,28 +13,28 @@
     <!-- Text handwriting  -->
     <div class="container my-4">
         <div class="card shadow-sm border-0 rounded-4 p-4">
-            <h2 class="text-center text-primary fw-semibold mb-4 display-6">
-                Text Analyzer
-            </h2>
+            <div class="my-4 text-center display-6">
+                <p class="text-primary">Text analyzer</p>
+            </div>
             <form hx-post="/analyze" hx-target="#result" hx-swap="innerHTML" class="d-flex flex-column gap-3">
                 <textarea
                     class="form-control border-primary rounded-3"
                     style="min-height: 300px;"
                     id="textarea"
                     name="text"
-                    maxlength="{{maxWords}}"
+                    maxlength="30000"
                     required></textarea>
-                <div id="word-count" class="text-end text-muted small">
-                    0 / 10000
+                <div id="char-count" class="text-end text-muted small">
+                    0 / 10 000
                 </div>
-                <button type="submit" id="submit-btn" class="btn btn-primary w-100 rounded-pill" disabled>
+                <button type="submit" id="submit-btn" class="btn btn-primary w-100">
                     Count!
                 </button>
             </form>
         </div>
     </div>
 
-    <!-- File upload (modern version) -->
+    <!-- File upload -->
     <div class="container my-4">
         <div class="card shadow-sm border-0 rounded-4">
             <div class="card-body text-center">
@@ -54,31 +54,26 @@
     <div id="result"></div>
 
 </body>
-
 <script>
     const textarea = document.getElementById('textarea');
-    const wordCount = document.getElementById('word-count');
+    const charCount = document.getElementById('char-count');
     const submitBtn = document.getElementById('submit-btn');
-    const maxWords = 10000;
+    const MAX_CHARS = 10000;
 
     textarea.addEventListener('input', function() {
-        const text = textarea.value.trim();
-        const words = text === '' ? 0 : text.split(/\s+/).length;
-        wordCount.textContent = `${words} / ${maxWords}`;
+        const text = textarea.value;
+        const chars = text.length;
+        charCount.textContent = `${chars} / ${MAX_CHARS}`;
 
-        if (words > maxWords) {
-            wordCount.style.color = 'red';
+        if (chars > MAX_CHARS || chars === 0) {
             submitBtn.disabled = true;
-            submitBtn.className = 'btn btn-secondary w-100';
-        }
-        else if (words == 0) {
-            submitBtn.disabled = true;
-            submitBtn.className = 'btn btn-secondary w-100';
-        }
-        else {
-            wordCount.style.color = 'black';
+            submitBtn.classList.remove('btn-primary');
+            submitBtn.classList.add('btn-secondary');
+        } else {
+            charCount.style.color = 'black';
             submitBtn.disabled = false;
-            submitBtn.className = 'btn btn-primary w-100';
+            submitBtn.classList.remove('btn-secondary');
+            submitBtn.classList.add('btn-primary');
         }
     });
 </script>

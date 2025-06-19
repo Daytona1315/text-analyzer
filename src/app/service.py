@@ -11,7 +11,7 @@ from flask import (
 )
 from werkzeug.utils import secure_filename
 
-from src.app.utils.env_loader import allowed_extensions
+from src.app.utils.env_loader import Config
 from src.app.utils.custom_exception import FileProcessingError
 
 
@@ -28,7 +28,7 @@ def allowed_file(filename) -> bool:
     Prevents from filename injections or smth, flask docs recommend to do this.
     """
     return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in allowed_extensions
+           filename.rsplit('.', 1)[1].lower() in Config.allowed_extensions
 
 
 def load_file(request: Request) -> tuple:

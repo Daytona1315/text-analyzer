@@ -3,11 +3,7 @@ import time
 
 from flask import current_app
 
-from src.app.utils.env_loader import (
-    file_cleanup_threshold,
-    file_cleanup_sleep,
-    upload_folder,
-)
+from src.app.utils.env_loader import Config
 
 
 def cleanup_old_files() -> None:
@@ -17,7 +13,7 @@ def cleanup_old_files() -> None:
     """
     while True:
         folder: str = current_app.config['UPLOAD_FOLDER']
-        threshold: int = file_cleanup_threshold  # specified in .env (1 = one second)
+        threshold: int = Config.file_cleanup_threshold  # specified in .env (1 = one second)
         now: float = time.time()
         for filename in os.listdir(folder):
             path = os.path.join(folder, filename)
@@ -26,4 +22,4 @@ def cleanup_old_files() -> None:
                 if now - last_modified > threshold:
                     os.remove(path)
                     print(f"Removed old file: {path}")
-        time.sleep(file_cleanup_sleep)  # specified in .env (1 = 1 second)
+        time.sleep(Config.file_cleanup_sleep)  # specified in .env (1 = 1 second)
