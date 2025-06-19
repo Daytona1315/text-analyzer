@@ -1,7 +1,8 @@
+{% if result %}
 <div class="container my-4">
     <div class="card shadow-sm border-0 rounded-4 p-4">
         <div class="alert alert-primary text-center fw-semibold rounded-3 mb-4" role="alert">
-            "{{ result.preview }}"
+            "{{ result['preview'] }}"
         </div>
 
         <table class="table">
@@ -26,6 +27,8 @@
                 </tr>
             </tbody>
         </table>
-
     </div>
 </div>
+{% else %}
+    <div></div>
+{% endif %}

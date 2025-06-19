@@ -21,15 +21,22 @@ def create_app():
     app.config['UPLOAD_FOLDER'] = Config.upload_folder
     app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=Config.session_lifetime)
 
-    # redis for sessions (db=0)
-    app.config['SESSION_TYPE'] = 'redis'
-    app.config['SESSION_REDIS'] = get_redis_connection(db=0)
-    Session(app)
-    # redis for history (db=1)
-    app.redis_history = get_redis_connection(db=1)
+    # Redis connection block
 
-    from src.app.router import router
-    app.register_blueprint(router)
+    # redis for sessions
+    # as Flask-Session expect to work with bytes,
+    # decode_responses parameter set to False
+    app.config['SESSION_TYPE'] = 'redis'
+    app.config['SESSION_REDIS'] = get_redis_connection(db=0, decode_responses=False)
+    Session(app)
+
+    # redis for history
+    # as we work here with strings,
+    # decode_responses parameter set to True
+    app.redis_history = get_redis_connection(db=1, decode_responses=True)
+
+    from app.blueprints.main_bp import main_bp
+    app.register_blueprint(main_bp)
 
     # starting cleanup in a separate thread
     def run_cleanup():
@@ -52,9 +59,11 @@ def create_app():
     @app.before_request
     def set_user_id() -> None:
         """
-        Creates uuid for user. It is placed in session,
-        other private values may be added there also.
+        Initializes session. Creates uuid for user.
+        It is placed in session, other private values
+        may be added there also.
         """
+
         if 'user_id' not in session:
             session['user_id'] = [str(uuid.uuid4())]
 

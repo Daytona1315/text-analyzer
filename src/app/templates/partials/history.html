@@ -1,0 +1,7 @@
+{% if history %}
+  <h4>History</h4>
+  <p>{{ history }}</p>
+  <button hx-delete="/history">Clear history</button>
+{% else %}
+  <div></div>
+{% endif %}
