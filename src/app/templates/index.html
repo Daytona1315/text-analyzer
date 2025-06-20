@@ -56,16 +56,29 @@
     </div>
 
     <!-- History -->
-    <div id="history" hx-swap-oob="true">
-        {% include "partials/history.html" %}
+    <div class="container my-4">
+        <div class="card shadow-sm border-0 rounded-4 p-4">
+            <h4>History</h4>
+            <div id="history">
+            </div>
+            <button class="btn btn-light w-100 px-4" hx-delete="/history" hx-target="#history" hx-swap="none">
+                Clear history
+            </button>
+        </div>
     </div>
+
 
     <!-- Results -->
-    <div id="result">
-        {% include "partials/result.html" %}
-    </div>
+    <div id="result"></div>
 
 </body>
+<script>
+    document.body.addEventListener('htmx:afterOnLoad', function(evt) {
+    if (evt.detail.xhr.getResponseHeader('HX-Trigger') === 'historyNeedsUpdate') {
+        htmx.ajax('GET', '/history', { target: '#history', swap: 'innerHTML' });
+    }
+});
+</script>
 <script>
     const textarea = document.getElementById('textarea');
     const charCount = document.getElementById('char-count');

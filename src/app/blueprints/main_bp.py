@@ -2,7 +2,7 @@ from flask import (
     Blueprint,
     render_template,
     request,
-    session,
+    session, render_template_string, make_response,
 )
 
 from src.app.services.history import HistoryService
@@ -25,17 +25,20 @@ def root():
 
 @main_bp.route("/analyze", methods=["POST"])
 def analyze_text(text: str = None):
-    user_id = session['user_id']
+    user_id: str = session['user_id']
     if not text:
         text = request.form.get("text")
     result = TextService.analyze_text(text)
-    HistoryService.save_history(user_id, data=result['preview'])
-    history = HistoryService.get_history(user_id)
-    return render_template(
-        "partials/result_with_history.html",
-        result=result,
-        history=history,
+    HistoryService.history_save(user_id, data=result['preview'])
+
+    result_html = render_template(
+        'partials/result.html',
+        result=result
     )
+
+    response = make_response(result_html)
+    response.headers['HX-Trigger'] = 'historyNeedsUpdate'
+    return response
 
 
 @main_bp.route("/upload", methods=["POST"])
@@ -46,9 +49,31 @@ def upload_file():
             file_path=file_path,
             extension=extension,
         )
-        return analyze_text(text)
+        return analyze_text(text=text)
     except FileProcessingError as e:
         return render_template(
             'partials/error.html',
             message=e.message
         )
+
+
+@main_bp.route("/history", methods=["GET"])
+def get_history():
+    user_id: str = session['user_id']
+    history = HistoryService.history_get(user_id)
+    if len(history) == 0:
+        history = ""
+    history_html = render_template(
+        'partials/history.html',
+        history=history
+    )
+    return history_html
+
+
+@main_bp.route("/history", methods=["DELETE"])
+def clear_history():
+    user_id: str = session['user_id']
+    HistoryService.history_clear(user_id)
+    response = make_response('')
+    response.headers['HX-Trigger'] = 'historyNeedsUpdate'
+    return response

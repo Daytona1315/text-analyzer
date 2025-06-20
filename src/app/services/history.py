@@ -10,16 +10,16 @@ class HistoryService:
     """
 
     @classmethod
-    def save_history(cls, user_id: str, data: str) -> None:
+    def history_save(cls, user_id: str, data: str) -> None:
         key = f"history:{user_id}"
         r.rpush(key, data)
 
     @classmethod
-    def get_history(cls, user_id: str, count: int = 10) -> list:
+    def history_get(cls, user_id: str, count: int = 10) -> list:
         key = f"history:{user_id}"
         return r.lrange(key, -count, -1)
 
     @classmethod
-    def clear_history(cls, user_id: str) -> None:
+    def history_clear(cls, user_id: str) -> None:
         key = f"history:{user_id}"
         r.delete(key)
