@@ -1,5 +1,4 @@
 import uuid
-import threading
 from datetime import timedelta
 from flask import (
     Flask,
@@ -9,14 +8,14 @@ from flask import (
 from flask_session import Session
 from werkzeug.exceptions import RequestEntityTooLarge
 
-from src.app.utils.cleanup import cleanup_old_files
 from src.app.utils.env_loader import Config
-from src.db.redis import get_redis_connection
+from src.db.redis_client import get_redis_connection
 
 
 def create_app():
     app = Flask(__name__)
     app.secret_key = Config.secret_key
+
     app.config['MAX_CONTENT_LENGTH'] = Config.max_file_size
     app.config['UPLOAD_FOLDER'] = Config.upload_folder
     app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=Config.session_lifetime)
@@ -30,20 +29,12 @@ def create_app():
     app.config['SESSION_REDIS'] = get_redis_connection(db=0, decode_responses=False)
     Session(app)
 
-    # redis for history
-    # as we work here with strings,
-    # decode_responses parameter set to True
-    app.redis_history = get_redis_connection(db=1, decode_responses=True)
+    # redis for business logic
+    from src.app.services.redis_service import RedisService
+    app.extensions['redis_service'] = RedisService()
 
     from app.blueprints.main_bp import main_bp
     app.register_blueprint(main_bp)
-
-    # starting cleanup in a separate thread
-    def run_cleanup():
-        with app.app_context():
-            cleanup_old_files()
-
-    threading.Thread(target=run_cleanup, daemon=True).start()
 
     # 'before request' section
     @app.before_request

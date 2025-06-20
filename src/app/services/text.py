@@ -1,5 +1,7 @@
 import re
 import string
+import uuid
+
 import docx
 import PyPDF2
 import textract
@@ -60,8 +62,9 @@ class TextService:
         # calculate non-whitespace character count.
         chars_no_spaces_count = len(text) - whitespace_count
         result = {
+            'id': str(uuid.uuid4()),
+            'short_preview': text[:40] + '...' if len(text) > 140 else text,
             'preview': text[:140] + '...' if len(text) > 140 else text,
-            # core metrics of the text.
             'metrics': {
                 'characters_no_whitespace': chars_no_spaces_count,
                 'characters_with_whitespace': len(text),
@@ -70,11 +73,8 @@ class TextService:
                 'punctuation': len(punctuation_chars),
                 'whitespace': whitespace_count
             },
-            # lists of found items.
             'lists': {
                 'words': words,
-                'numbers': numbers,
-                'punctuation': punctuation_chars
             }
         }
 

@@ -30,6 +30,8 @@ class Config:
 
     redis_port: int = int(os.getenv('REDIS_PORT', 6379))
 
+    redis_max_count: int = int(os.getenv('REDIS_MAX_COUNT'))  # maximal number of saved analysis results
+
     BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     if not os.path.isabs(upload_folder):
         upload_folder = os.path.join(BASE_DIR, upload_folder)

@@ -50,7 +50,7 @@ class FileService:
             file.save(file_path)
             # safely update session list to track uploaded files without duplicates,
             # ensuring Flask detects the change by replacing the list in session.
-            files = session.get('../files', [])
+            files = session.get('files', [])
             if filename not in files:
                 files.append(filename)
                 session['files'] = files

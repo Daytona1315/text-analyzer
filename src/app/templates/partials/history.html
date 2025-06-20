@@ -1,1 +1,16 @@
-<p class="text-success">{{ history }}</p>
+{% if history %}
+    <div class="d-flex flex-wrap gap-2 my-2">
+        {% for item in history %}
+            <button
+                    type="button"
+                    class="btn btn-outline-secondary btn-sm"
+                    hx-get="/result-by-id/{{ item['id'] }}"
+                    hx-target="#result"
+                    hx-swap="innerHTML">
+                <small>{{ item['short_preview'] }}</small>
+            </button>
+        {% endfor %}
+    </div>
+{% else %}
+    <p class="text-muted">Empty</p>
+{% endif %}
