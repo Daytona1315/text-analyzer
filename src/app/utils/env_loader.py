@@ -15,11 +15,7 @@ class Config:
 
     secret_key: str = os.getenv('SECRET_KEY', 'fallback-secret')
 
-    file_cleanup_threshold: int = int(os.getenv('FILE_CLEANUP_THRESHOLD'))
-
-    file_cleanup_sleep: int = int(os.getenv('FILE_CLEANUP_SLEEP'))
-
-    is_session_permanent: bool = strtobool(os.getenv('IS_SESSION_PERMANENT'))  # validated by strtobool.py
+    is_session_permanent: bool = strtobool(os.getenv('IS_SESSION_PERMANENT'))
 
     session_lifetime: int = int(os.getenv('SESSION_LIFETIME'))  # value in minutes (1 = one minute)
 
@@ -31,6 +27,8 @@ class Config:
     redis_port: int = int(os.getenv('REDIS_PORT', 6379))
 
     redis_max_count: int = int(os.getenv('REDIS_MAX_COUNT'))  # maximal number of saved analysis results
+
+    redis_record_expire: int = int(os.getenv('REDIS_RECORD_EXPIRE'))  # lifetime of record
 
     BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     if not os.path.isabs(upload_folder):

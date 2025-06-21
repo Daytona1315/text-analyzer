@@ -28,7 +28,7 @@ def root():
 @main_bp.route("/analyze", methods=["POST"])
 def analyze_text(text: str = None):
     redis = current_app.extensions['redis_service']
-    user_id: str = session['user_id'][0]
+    user_id: str = session['user_id']
     if not text:
         text = request.form.get("text")
     result = TextService.analyze_text(text)
@@ -61,7 +61,7 @@ def upload_file():
 @main_bp.route("/history", methods=["GET"])
 def get_history():
     redis = current_app.extensions['redis_service']
-    user_id: str = session['user_id'][0]
+    user_id: str = session['user_id']
     history = redis.analysis_history_get(user_id)
     if len(history) == 0:
         history = None
@@ -75,7 +75,7 @@ def get_history():
 @main_bp.route("/result-by-id/<analysis_id>", methods=["GET"])
 def get_result_by_id(analysis_id: str):
     redis = current_app.extensions['redis_service']
-    user_id: str = session['user_id'][0]
+    user_id: str = session['user_id']
     result: dict = redis.analysis_result_get(user_id, analysis_id)
     if result:
         return render_template(
@@ -91,7 +91,7 @@ def get_result_by_id(analysis_id: str):
 @main_bp.route("/history", methods=["DELETE"])
 def clear_history():
     redis = current_app.extensions['redis_service']
-    user_id: str = session['user_id'][0]
+    user_id: str = session['user_id']
     redis.analysis_result_clear(user_id)
     response = make_response('')
     response.headers['HX-Trigger'] = 'historyNeedsUpdate'

@@ -54,9 +54,8 @@ def create_app():
         It is placed in session, other private values
         may be added there also.
         """
-
         if 'user_id' not in session:
-            session['user_id'] = [str(uuid.uuid4())]
+            session['user_id'] = str(uuid.uuid4())
 
     # 'error handler' section
     @app.errorhandler(RequestEntityTooLarge)

@@ -43,7 +43,7 @@ class FileService:
         if file.filename == '':
             raise FileProcessingError(message="No file selected")
         if file and FileService.allowed_file(file.filename):
-            user_id = session['user_id'][0]
+            user_id = session['user_id']
             filename = f"{user_id}_{secure_filename(file.filename)}"
             file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
 

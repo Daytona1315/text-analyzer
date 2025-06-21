@@ -13,6 +13,8 @@ class RedisService:
 
     def analysis_result_save(self, user_id: str, data: dict):
         self.redis.lpush(user_id, json.dumps(data))
+        if self.redis.ttl(user_id) == -1:
+            self.redis.expire(user_id, Config.redis_record_expire)
         self.redis.ltrim(user_id, 0, Config.redis_max_count)
 
     def analysis_result_get(self, user_id: str, analysis_id: str) -> dict | None:

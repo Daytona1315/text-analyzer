@@ -14,20 +14,30 @@
     <div class="container my-4">
         <div class="card shadow-sm border-0 rounded-4 p-4">
             <div class="my-4 text-center display-6">
-                <p class="text-primary">Text analyzer</p>
+                <p class="text-primary">
+                    Text analyzer
+                </p>
             </div>
-            <form hx-post="/analyze" hx-target="#result" hx-swap="innerHTML" class="d-flex flex-column gap-3">
+            <form
+                    hx-post="/analyze"
+                    hx-target="#result" hx-swap="innerHTML" class="d-flex flex-column gap-3">
                 <textarea
-                    class="form-control border-primary rounded-3"
-                    style="min-height: 300px;"
-                    id="textarea"
-                    name="text"
-                    maxlength="30000"
-                    required></textarea>
-                <div id="char-count" class="text-end text-muted small">
+                        class="form-control border-primary rounded-3"
+                        style="min-height: 300px;"
+                        id="textarea"
+                        name="text"
+                        maxlength="30000"
+                        required>
+                </textarea>
+                <div
+                        id="char-count"
+                        class="text-end text-muted small">
                     0 / 10 000
                 </div>
-                <button type="submit" id="submit-btn" class="btn btn-primary w-100">
+                <button
+                        type="submit"
+                        id="submit-btn"
+                        class="btn btn-primary w-100">
                     Count!
                 </button>
             </form>
@@ -35,33 +45,56 @@
     </div>
 
     <!-- File upload -->
-    <div class="container my-4">
-        <div class="card shadow-sm border-0 rounded-4">
-            <div class="card-body text-center">
-                <p class="text-muted mb-3 small">
-                    Choose a file to analyze (max 2 MB, formats: .txt, .doc, .docx, .pdf)
-                </p>
-                <form
-                        hx-post="/upload"
-                        hx-target="#result"
-                        hx-indicator="#loading"
-                        enctype="multipart/form-data"
-                        class="d-flex flex-column align-items-center gap-3">
-                    <input type="file" name="file" class="form-control w-auto" required>
-                    <button type="submit" class="btn btn-primary rounded-pill px-4">Upload</button>
-                </form>
-                <div id="loading" class="htmx-indicator spinner-border text-primary mt-3" role="status"></div>
+        <div class="container my-4">
+            <div class="card shadow-sm border-0 rounded-4">
+                <div class="card-body text-center">
+                    <p class="text-muted mb-3 small">
+                        Choose a file to analyze (max 2 MB, formats: .txt, .doc, .docx, .pdf)
+                    </p>
+                    <form
+                            hx-post="/upload"
+                            hx-target="#result"
+                            hx-indicator="#loading"
+                            enctype="multipart/form-data"
+                            class="d-flex justify-content-center align-items-center gap-3">
+                        <input
+                                type="file"
+                                name="file"
+                                class="form-control w-auto"
+                                required>
+                        <button
+                                type="submit"
+                                class="btn btn-outline-primary px-4">
+                            Upload
+                        </button>
+                    </form>
+                    <div
+                            id="loading"
+                            class="htmx-indicator spinner-border text-primary mt-3"
+                            role="status"
+                    ></div>
+                </div>
             </div>
         </div>
-    </div>
 
     <!-- History -->
-    <div class="container my-4">
+    <div class="container-sm my-4">
         <div class="card shadow-sm border-0 rounded-4 p-4">
-            <h4>Recent</h4>
-            <div id="history">
+            <h4>
+                Recent
+            </h4>
+            <div
+                    id="history"
+                    hx-get="/history"
+                    hx-target="#history"
+                    hx-trigger="load">
             </div>
-            <button class="btn btn-light w-100 px-4" hx-delete="/history" hx-target="#history" hx-swap="none">
+            <button
+                    class="btn btn-light w-100 px-4"
+                    hx-delete="/history"
+                    hx-target="#history"
+                    hx-swap="none"
+                    hx-indicator="#loading">
                 Clear history
             </button>
         </div>
@@ -69,7 +102,9 @@
 
 
     <!-- Results -->
-    <div id="result"></div>
+    <div id="result">
+
+    </div>
 
 </body>
 <script>
