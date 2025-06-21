@@ -1,9 +1,11 @@
+import json
+
 from flask import (
     Blueprint,
     render_template,
     request,
     session,
-    make_response, current_app,
+    make_response, current_app, jsonify,
 )
 
 from src.app.services.text import TextService
@@ -70,18 +72,20 @@ def get_history():
     return history_html
 
 
-@main_bp.route("/result-by-id", methods=["GET"])
+@main_bp.route("/result-by-id/<analysis_id>", methods=["GET"])
 def get_result_by_id(analysis_id: str):
     redis = current_app.extensions['redis_service']
     user_id: str = session['user_id'][0]
-    history = redis.analysis_history_get(user_id)
-    for record in history:
-        if record['id'] == analysis_id:
-            return render_template(
-                'partials/result.html',
-                result=record,
-            )
-    return render_template('404.html')
+    result: dict = redis.analysis_result_get(user_id, analysis_id)
+    if result:
+        return render_template(
+            'partials/result.html',
+            result=result
+        )
+    return render_template(
+        'partials/error.html',
+        message='Not found'
+    )
 
 
 @main_bp.route("/history", methods=["DELETE"])

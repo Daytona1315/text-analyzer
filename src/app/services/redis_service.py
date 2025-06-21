@@ -15,9 +15,13 @@ class RedisService:
         self.redis.lpush(user_id, json.dumps(data))
         self.redis.ltrim(user_id, 0, Config.redis_max_count)
 
-    def analysis_result_get(self, user_id: str, analysis_id: str):
-        raw_list = self.redis.lrange(user_id, 0, Config.redis_max_count)
-        return [json.loads(item) for item in raw_list]
+    def analysis_result_get(self, user_id: str, analysis_id: str) -> dict | None:
+        user_data: list = self.redis.lrange(user_id, 0, Config.redis_max_count)
+        for record in user_data:
+            dictionary: dict = json.loads(record)
+            if dictionary['id'] == analysis_id:
+                return dictionary
+        return None
 
     def analysis_result_clear(self, user_id: str):
         self.redis.delete(user_id)
