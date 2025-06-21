@@ -2,40 +2,34 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <title>Text analyzer</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://unpkg.com/htmx.org@1.9.10"></script>
-    <title>Text analyzer</title>
 </head>
 <body class="bg-body-tertiary">
 
-    <!-- Text handwriting  -->
+    <!-- Text Input -->
     <div class="container my-4">
         <div class="card shadow-sm border-0 rounded-4 p-4">
-            <div class="my-4 text-center display-6">
-                <p class="text-primary">
-                    Text analyzer
-                </p>
+            <div class="my-4 text-center display-5 text-primary">
+                Text analyzer
             </div>
-            <form
-                    hx-post="/analyze"
-                    hx-target="#result" hx-swap="innerHTML" class="d-flex flex-column gap-3">
-                <textarea
-                        class="form-control border-primary rounded-3"
-                        style="min-height: 300px;"
-                        id="textarea"
-                        name="text"
-                        maxlength="30000"
-                        required>
-                </textarea>
-                <div
-                        id="char-count"
-                        class="text-end text-muted small">
+            <form hx-post="/analyze"
+                  hx-target="#result"
+                  hx-swap="innerHTML"
+                  class="d-flex flex-column gap-3">
+                <textarea class="form-control border-primary rounded-3"
+                          style="min-height: 300px;"
+                          id="textarea"
+                          name="text"
+                          maxlength="30000"
+                          required></textarea>
+                <div id="char-count" class="text-end text-muted small">
                     0 / 10 000
                 </div>
-                <button
-                        type="submit"
+                <button type="submit"
                         id="submit-btn"
                         class="btn btn-primary w-100">
                     Count!
@@ -44,53 +38,47 @@
         </div>
     </div>
 
-    <!-- File upload -->
-        <div class="container my-4">
-            <div class="card shadow-sm border-0 rounded-4">
-                <div class="card-body text-center">
-                    <p class="text-muted mb-3 small">
-                        Choose a file to analyze (max 2 MB, formats: .txt, .doc, .docx, .pdf)
-                    </p>
-                    <form
-                            hx-post="/upload"
-                            hx-target="#result"
-                            hx-indicator="#loading"
-                            enctype="multipart/form-data"
-                            class="d-flex justify-content-center align-items-center gap-3">
-                        <input
-                                type="file"
-                                name="file"
-                                class="form-control w-auto"
-                                required>
-                        <button
-                                type="submit"
-                                class="btn btn-outline-primary px-4">
-                            Upload
-                        </button>
-                    </form>
-                    <div
-                            id="loading"
-                            class="htmx-indicator spinner-border text-primary mt-3"
-                            role="status"
-                    ></div>
-                </div>
+    <!-- File Upload -->
+    <div class="container my-4">
+        <div class="card shadow-sm border-0 rounded-4">
+            <div class="card-body text-center">
+                <p class="text-muted mb-3 small">
+                    Choose a file to analyze (max 2 MB, formats: .txt, .doc, .docx, .pdf)
+                </p>
+                <form hx-post="/upload"
+                      hx-target="#result"
+                      hx-indicator="#loading"
+                      enctype="multipart/form-data"
+                      class="d-flex justify-content-center align-items-center gap-3">
+                    <input type="file"
+                           name="file"
+                           class="form-control w-auto"
+                           required>
+                    <button type="submit"
+                            class="btn btn-outline-secondary px-4">
+                        Upload
+                    </button>
+                </form>
+                <div id="loading"
+                     class="htmx-indicator spinner-border text-primary mt-3"
+                     role="status"></div>
+
+                <!-- Possible Errors -->
+                <div id="error" class="mt-3"></div>
             </div>
         </div>
+    </div>
 
     <!-- History -->
     <div class="container-sm my-4">
         <div class="card shadow-sm border-0 rounded-4 p-4">
-            <h4>
-                Recent
-            </h4>
-            <div
-                    id="history"
-                    hx-get="/history"
-                    hx-target="#history"
-                    hx-trigger="load">
+            <h4>Recent</h4>
+            <div id="history"
+                 hx-get="/history"
+                 hx-target="#history"
+                 hx-trigger="load">
             </div>
-            <button
-                    class="btn btn-light w-100 px-4"
+            <button class="btn btn-light w-100 px-4 mt-3"
                     hx-delete="/history"
                     hx-target="#history"
                     hx-swap="none"
@@ -100,41 +88,39 @@
         </div>
     </div>
 
-
     <!-- Results -->
-    <div id="result">
+    <div id="result" class="container my-4"></div>
 
-    </div>
+    <!-- HTMX History Trigger -->
+    <script>
+        document.body.addEventListener('htmx:afterOnLoad', function(evt) {
+            if (evt.detail.xhr.getResponseHeader('HX-Trigger') === 'historyNeedsUpdate') {
+                htmx.ajax('GET', '/history', { target: '#history', swap: 'innerHTML' });
+            }
+        });
+    </script>
+
+    <!-- Textarea Char Counter -->
+    <script>
+        const textarea = document.getElementById('textarea');
+        const charCount = document.getElementById('char-count');
+        const submitBtn = document.getElementById('submit-btn');
+        const MAX_CHARS = 10000;
+
+        textarea.addEventListener('input', function() {
+            const chars = textarea.value.length;
+            charCount.textContent = `${chars} / ${MAX_CHARS}`;
+
+            if (chars > MAX_CHARS || chars === 0) {
+                submitBtn.disabled = true;
+                submitBtn.classList.replace('btn-primary', 'btn-secondary');
+            } else {
+                charCount.style.color = 'black';
+                submitBtn.disabled = false;
+                submitBtn.classList.replace('btn-secondary', 'btn-primary');
+            }
+        });
+    </script>
 
 </body>
-<script>
-    document.body.addEventListener('htmx:afterOnLoad', function(evt) {
-    if (evt.detail.xhr.getResponseHeader('HX-Trigger') === 'historyNeedsUpdate') {
-        htmx.ajax('GET', '/history', { target: '#history', swap: 'innerHTML' });
-    }
-});
-</script>
-<script>
-    const textarea = document.getElementById('textarea');
-    const charCount = document.getElementById('char-count');
-    const submitBtn = document.getElementById('submit-btn');
-    const MAX_CHARS = 10000;
-
-    textarea.addEventListener('input', function() {
-        const text = textarea.value;
-        const chars = text.length;
-        charCount.textContent = `${chars} / ${MAX_CHARS}`;
-
-        if (chars > MAX_CHARS || chars === 0) {
-            submitBtn.disabled = true;
-            submitBtn.classList.remove('btn-primary');
-            submitBtn.classList.add('btn-secondary');
-        } else {
-            charCount.style.color = 'black';
-            submitBtn.disabled = false;
-            submitBtn.classList.remove('btn-secondary');
-            submitBtn.classList.add('btn-primary');
-        }
-    });
-</script>
 </html>

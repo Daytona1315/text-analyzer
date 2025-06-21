@@ -5,12 +5,12 @@ from flask import (
     render_template,
     request,
     session,
-    make_response, current_app, jsonify,
+    make_response,
+    current_app,
 )
 
 from src.app.services.text import TextService
 from src.app.services.file import FileService
-from src.app.utils.custom_exception import FileProcessingError
 
 
 main_bp = Blueprint(
@@ -44,18 +44,13 @@ def analyze_text(text: str = None):
 
 @main_bp.route("/upload", methods=["POST"])
 def upload_file():
-    try:
-        file_path, extension = FileService.load_file(request)
-        text = TextService.extract_text(
-            file_path=file_path,
-            extension=extension,
-        )
-        return analyze_text(text=text)
-    except FileProcessingError as e:
-        return render_template(
-            'partials/error.html',
-            message=e.message
-        )
+    result: tuple = FileService.load_file(request)
+    file_path, extension = result
+    text: str = TextService.extract_text(
+        file_path=file_path,
+        extension=extension,
+    )
+    return analyze_text(text)
 
 
 @main_bp.route("/history", methods=["GET"])

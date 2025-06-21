@@ -3,13 +3,14 @@ from datetime import timedelta
 from flask import (
     Flask,
     session,
-    render_template,
+    render_template, make_response, Response,
 )
 from flask_session import Session
 from werkzeug.exceptions import RequestEntityTooLarge
 
 from src.app.utils.env_loader import Config
 from src.db.redis_client import get_redis_connection
+from src.app.utils.custom_exceptions import UnsupportedFileType
 
 
 def create_app():
@@ -59,11 +60,26 @@ def create_app():
 
     # 'error handler' section
     @app.errorhandler(RequestEntityTooLarge)
-    def file_too_large(e) -> str:
-        return render_template(
-            'partials/error.html',
-            message="File is too large."
+    def file_too_large(e) -> Response:
+        response = make_response(
+            render_template(
+                'partials/error.html',
+                message='File is too large'
+            )
         )
+        response.headers['HX-Target'] = '#error'
+        return response
+
+    @app.errorhandler(UnsupportedFileType)
+    def file_unsupported(e) -> Response:
+        response = make_response(
+            render_template(
+                'partials/error.html',
+                message='File is not allowed'
+            )
+        )
+        response.headers['HX-Target'] = '#error'
+        return response
 
     @app.errorhandler(404)
     def page_not_found(e) -> str:

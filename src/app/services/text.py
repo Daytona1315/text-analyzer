@@ -6,8 +6,6 @@ import docx
 import PyPDF2
 import textract
 
-from src.app.services.file import FileService
-
 
 class TextService:
     """
@@ -18,7 +16,6 @@ class TextService:
         """
         Uses suitable module to extract text from file.
         """
-        FileService.touch(file_path)
         match extension:
             case '.txt':
                 with open(file_path, 'r', encoding='utf-8') as f:
