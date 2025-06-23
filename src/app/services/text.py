@@ -5,12 +5,35 @@ import uuid
 import docx
 import PyPDF2
 import textract
+from flask import (
+    Response,
+    session,
+    current_app,
+    render_template,
+    make_response,
+)
+
+from app.utils.custom_exceptions import FileIsEmpty
 
 
 class TextService:
     """
     Contains necessary methods related to text processing.
     """
+
+    @classmethod
+    def provide_text_analysis(cls, text: str) -> Response:
+        user_id: str = session['user_id']
+        redis = current_app.extensions['redis_service']
+        result = TextService.analyze_text(text)
+        redis.analysis_result_save(user_id, result)
+        result_html = render_template('partials/result.html', result=result)
+        response = make_response(result_html)
+        response.headers['HX-Trigger'] = 'historyNeedsUpdate'
+        # adding current result in session for possible further operations
+        session['active_result'] = result['id']
+        return response
+
     @classmethod
     def extract_text(cls, file_path: str, extension: str):
         """
@@ -45,8 +68,8 @@ class TextService:
 
         Returns:
             A dictionary with the analysis results.
-        """
 
+        """
         # Find all sequences of letters (words).
         # This regex handles words with hyphens or apostrophes inside.
         words = re.findall(r'[a-zA-Zа-яА-ЯёЁ]+(?:[-’\'][a-zA-Zа-яА-ЯёЁ]+)*', text)

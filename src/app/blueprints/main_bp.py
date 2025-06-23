@@ -1,5 +1,3 @@
-import json
-
 from flask import (
     Blueprint,
     render_template,
@@ -9,6 +7,7 @@ from flask import (
     current_app,
 )
 
+from app.utils.custom_exceptions import FileIsEmpty
 from src.app.services.text import TextService
 from src.app.services.file import FileService
 
@@ -26,31 +25,18 @@ def root():
 
 
 @main_bp.route("/analyze", methods=["POST"])
-def analyze_text(text: str = None):
-    redis = current_app.extensions['redis_service']
-    user_id: str = session['user_id']
-    if not text:
-        text = request.form.get("text")
-    result = TextService.analyze_text(text)
-    redis.analysis_result_save(user_id, result)
-    result_html = render_template(
-        'partials/result.html',
-        result=result
-    )
-    response = make_response(result_html)
-    response.headers['HX-Trigger'] = 'historyNeedsUpdate'
-    return response
+def analyze_text():
+    text = request.form.get("text")
+    return TextService.provide_text_analysis(text)
 
 
 @main_bp.route("/upload", methods=["POST"])
 def upload_file():
-    result: tuple = FileService.load_file(request)
-    file_path, extension = result
-    text: str = TextService.extract_text(
-        file_path=file_path,
-        extension=extension,
-    )
-    return analyze_text(text)
+    file_path, extension = FileService.load_file(request)
+    text = TextService.extract_text(file_path=file_path, extension=extension)
+    if not text or not text.strip():
+        raise FileIsEmpty()
+    return TextService.provide_text_analysis(text)
 
 
 @main_bp.route("/history", methods=["GET"])
@@ -72,6 +58,8 @@ def get_result_by_id(analysis_id: str):
     redis = current_app.extensions['redis_service']
     user_id: str = session['user_id']
     result: dict = redis.analysis_result_get(user_id, analysis_id)
+    # adding current result in session for possible further operations
+    session['active_result'] = analysis_id
     if result:
         return render_template(
             'partials/result.html',

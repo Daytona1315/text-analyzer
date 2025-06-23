@@ -10,6 +10,7 @@ from werkzeug.utils import secure_filename
 from src.app.utils.env_loader import Config
 from src.app.utils.custom_exceptions import UnsupportedFileType
 
+
 class FileService:
     """
     Contains necessary methods related to files.

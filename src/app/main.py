@@ -8,6 +8,7 @@ from flask import (
 from flask_session import Session
 from werkzeug.exceptions import RequestEntityTooLarge
 
+from app.utils.custom_exceptions import FileIsEmpty
 from src.app.utils.env_loader import Config
 from src.db.redis_client import get_redis_connection
 from src.app.utils.custom_exceptions import UnsupportedFileType
@@ -76,6 +77,17 @@ def create_app():
             render_template(
                 'partials/error.html',
                 message='File is not allowed'
+            )
+        )
+        response.headers['HX-Target'] = '#error'
+        return response
+
+    @app.errorhandler(FileIsEmpty)
+    def file_is_empty(e) -> Response:
+        response = make_response(
+            render_template(
+                'partials/error.html',
+                message='File is empty'
             )
         )
         response.headers['HX-Target'] = '#error'
