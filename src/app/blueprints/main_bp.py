@@ -39,18 +39,15 @@ def upload_file():
     return TextService.provide_text_analysis(text)
 
 
-@main_bp.route("/result-by-id", methods=["GET"])
-def get_result_by_id():
+@main_bp.route("/result-by-id/<analysis_id>", methods=["GET"])
+def get_result_by_id(analysis_id: str):
     redis = current_app.extensions['redis_service']
     user_id: str = session['user_id']
-    analysis_id: str = session['active_result']
     result: dict = redis.analysis_result_get(user_id, analysis_id)
-    # adding current result in session for further operations
-    session['active_result'] = analysis_id
     if result:
         return render_template(
             'partials/result.html',
-            result=result,
+            result=result
         )
     return render_template(
         'partials/error.html',
