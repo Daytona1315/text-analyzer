@@ -1,7 +1,7 @@
 {% if history %}
     <div class="d-flex flex-wrap gap-2 my-2">
         {% for item in history %}
-            <button type="button" class="btn btn-outline-secondary btn-sm" hx-get="/result-by-id/{{ item['id'] }}"
+            <button type="button" class="btn btn-outline-secondary btn-sm" hx-get="/result-by-id"
                     hx-target="#result"
                     hx-swap="innerHTML">
                 <small>{{ item['short_preview'] }}</small>

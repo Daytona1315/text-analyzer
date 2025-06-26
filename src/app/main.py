@@ -17,7 +17,6 @@ from src.app.utils.custom_exceptions import UnsupportedFileType
 def create_app():
     app = Flask(__name__)
     app.secret_key = Config.secret_key
-
     app.config['MAX_CONTENT_LENGTH'] = Config.max_file_size
     app.config['UPLOAD_FOLDER'] = Config.upload_folder
     app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=Config.session_lifetime)
@@ -32,11 +31,15 @@ def create_app():
     Session(app)
 
     # redis for business logic
-    from src.app.services.redis_service import RedisService
+    from src.app.services.redis import RedisService
     app.extensions['redis_service'] = RedisService()
 
-    from app.blueprints.main_bp import main_bp
+    from src.app.blueprints.main_bp import main_bp
+    from src.app.blueprints.history_bp import history_bp
+    from src.app.blueprints.functions_bp import functions_bp
     app.register_blueprint(main_bp)
+    app.register_blueprint(history_bp)
+    app.register_blueprint(functions_bp)
 
     # 'before request' section
     @app.before_request

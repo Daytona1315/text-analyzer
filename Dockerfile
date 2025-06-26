@@ -12,6 +12,8 @@ RUN python -m pip install --upgrade pip==23.2.1
 
 RUN pip install -r requirements.txt
 
+RUN apt-get update && apt-get install -y catdoc
+
 COPY . /app
 
 EXPOSE 5000

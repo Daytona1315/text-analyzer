@@ -1,10 +1,10 @@
 import re
 import string
 import uuid
-
+import subprocess
 import docx
 import PyPDF2
-import textract
+import compressed_rtf
 from flask import (
     Response,
     session,
@@ -30,22 +30,19 @@ class TextService:
         result_html = render_template('partials/result.html', result=result)
         response = make_response(result_html)
         response.headers['HX-Trigger'] = 'historyNeedsUpdate'
-        # adding current result in session for possible further operations
+        # adding current result in session for further operations
         session['active_result'] = result['id']
         return response
 
     @classmethod
     def extract_text(cls, file_path: str, extension: str):
-        """
-        Uses suitable module to extract text from file.
-        """
-        match extension:
+        match extension.lower():
             case '.txt':
                 with open(file_path, 'r', encoding='utf-8') as f:
                     return f.read()
             case '.docx':
                 doc = docx.Document(file_path)
-                return '\n'.join(para.text for para in doc.paragraphs)
+                return '\n'.join(p.text for p in doc.paragraphs)
             case '.pdf':
                 text = ''
                 with open(file_path, 'rb') as f:
@@ -54,7 +51,18 @@ class TextService:
                         text += page.extract_text() or ''
                 return text
             case '.doc':
-                return textract.process(file_path).decode('utf-8')
+                try:
+                    output = subprocess.check_output(['catdoc', file_path])
+                    return output.decode('utf-8')
+                except Exception:
+                    return ''
+            case '.rtf':
+                try:
+                    with open(file_path, 'rb') as f:
+                        data = f.read()
+                        return compressed_rtf.decompress(data).decode('utf-8', errors='ignore')
+                except Exception:
+                    return ''
             case _:
                 return ''
 

@@ -1,30 +1,93 @@
+<!-- Results area -->
 <div class="container my-4">
     <div class="card shadow-sm border-0 rounded-4 p-4">
-        <div class="alert alert-primary text-center fw-semibold rounded-3 mb-4" role="alert">
-            "{{ result['preview'] }}"
+
+    <!-- Results table -->
+    <div class="alert alert-primary text-center fw-semibold rounded-3 mb-4" role="alert">
+        "{{ result['preview'] }}"
+    </div>
+
+    <table class="table">
+        <thead>
+            <tr class="fw-semibold">
+                <th scope="col">Symbols<small class="fw-light"> (No whitespaces)</small></th>
+                <th scope="col">Symbols<small class="fw-light"> (Whitespaces)</small></th>
+                <th scope="col">Words</th>
+                <th scope="col">Numbers</th>
+                <th scope="col">Punctuation</th>
+                <th scope="col">Whitespace</th>
+            </tr>
+        </thead>
+        <tbody class="fw-bold fs-5 fs-md-4 fs-lg-2">
+            <tr>
+                <td>{{ result['metrics']['characters_no_whitespace'] }}</td>
+                <td>{{ result['metrics']['characters_with_whitespace'] }}</td>
+                <td>{{ result['metrics']['words'] }}</td>
+                <td>{{ result['metrics']['numbers'] }}</td>
+                <td>{{ result['metrics']['punctuation'] }}</td>
+                <td>{{ result['metrics']['whitespace'] }}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- Options Section -->
+<div class="card shadow-sm border-0 rounded-4 p-4 mt-4">
+    <h4 class="lead mb-4">What next?</h4>
+
+        <!-- Grid of function cards -->
+        <div class="row g-4">
+
+            <div class="col-6 col-lg-3">
+                <div class="card h-100">
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title fw-semibold">Word cloud</h5>
+                        <p class="card-text flex-grow-1">Graphical illustration of the word frequency.</p>
+                        <button
+                                class="btn btn-outline-primary mt-auto"
+                                hx-get="/word-cloud"
+                                hx-target="#functions"
+                                hx-swap="innerHTML"
+                                hx-indicator=".functions-loading"
+                        >Get</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-6 col-lg-3">
+                <div class="card h-100">
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title fw-semibold">Lemmatization</h5>
+                        <p class="card-text flex-grow-1">Reduce words to their base form, known as the lemma.</p>
+                        <button class="btn btn-outline-secondary mt-auto" disabled>Soon</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-6 col-lg-3">
+                <div class="card h-100">
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title fw-semibold">New function</h5>
+                        <p class="card-text flex-grow-1">Some text here</p>
+                        <button class="btn btn-outline-secondary mt-auto" disabled>Soon</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-6 col-lg-3">
+                <div class="card h-100">
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title fw-semibold">And another New function</h5>
+                        <p class="card-text flex-grow-1">Some text here</p>
+                        <button class="btn btn-outline-secondary mt-auto" disabled>Soon</button>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <table class="table">
-            <thead>
-                <tr>
-                    <th scope="col">Symbols<small class="fw-light"> (No whitespaces)</small></th>
-                    <th scope="col">Symbols<small class="fw-light"> (Whitespaces)</small></th>
-                    <th scope="col">Words</th>
-                    <th scope="col">Numbers</th>
-                    <th scope="col">Punctuation</th>
-                    <th scope="col">Whitespace</th>
-                </tr>
-            </thead>
-            <tbody class="display-6">
-                <tr>
-                    <th scope="row">{{ result['metrics']['characters_no_whitespace'] }}</th>
-                    <th scope="row">{{ result['metrics']['characters_with_whitespace'] }}</th>
-                    <th scope="row">{{ result['metrics']['words'] }}</th>
-                    <th scope="row">{{ result['metrics']['numbers'] }}</th>
-                    <th scope="row">{{ result['metrics']['punctuation'] }}</th>
-                    <th scope="row">{{ result['metrics']['whitespace'] }}</th>
-                </tr>
-            </tbody>
-        </table>
+        <div class="d-flex mt-4 justify-content-center">
+            <div class="functions-loading htmx-indicator spinner-border text-primary mt-3" role="status"></div>
+        </div>
+
     </div>
 </div>
