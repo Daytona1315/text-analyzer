@@ -67,9 +67,10 @@ class FunctionsService:
         user_id: str = session['user_id']
         analysis_id: str = session['active_result']
         analysis_result: dict = redis.analysis_result_get(user_id, analysis_id)
-
         text = " ".join(analysis_result['lists']['words'])
         lang = detect_language(text)
+        if lang != 'ru' or lang != 'en':
+            return []
         nlp = NLPModels.get(lang)
         if not nlp:
             return []
