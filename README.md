@@ -17,8 +17,7 @@
 
 ## Tech Stack
 
-- Python 3.12+
+- Python 3.11+
 - Flask
 - HTMX + Bootstrap 5
-- python-docx, PyPDF2, textract
 - Poetry (dependency management)
