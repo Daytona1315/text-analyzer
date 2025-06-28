@@ -8,6 +8,7 @@ from flask import (
 from flask_session import Session
 from werkzeug.exceptions import RequestEntityTooLarge
 
+from app.services.functions import NLPModels
 from app.utils.custom_exceptions import FileIsEmpty
 from src.app.utils.env_loader import Config
 from src.db.redis_client import get_redis_connection
@@ -29,6 +30,9 @@ def create_app():
     app.config['SESSION_TYPE'] = 'redis'
     app.config['SESSION_REDIS'] = get_redis_connection(db=0, decode_responses=False)
     Session(app)
+
+    # preloading NLP models
+    NLPModels.load_all()
 
     # redis for business logic
     from src.app.services.redis import RedisService

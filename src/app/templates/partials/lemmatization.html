@@ -1,0 +1,13 @@
+<div class="container my-4">
+    <div class="card shadow-sm border-0 rounded-4 p-4 justify-content-center align-items-center">
+		<p class="fw-large text-primary">Your file is ready!</p>
+        <div class="d-flex" style="max-width: 70%">
+        <a
+				class="btn btn-primary px-4"
+				href="{{ url_for('static', filename=path) }}"
+				role="button" download>
+    		Download .csv
+		</a>
+        </div>
+    </div>
+</div>

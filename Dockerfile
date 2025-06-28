@@ -14,6 +14,9 @@ RUN pip install -r requirements.txt
 
 RUN apt-get update && apt-get install -y catdoc
 
+RUN python -m spacy download en_core_web_sm && \
+    python -m spacy download ru_core_news_sm
+
 COPY . /app
 
 EXPOSE 5000

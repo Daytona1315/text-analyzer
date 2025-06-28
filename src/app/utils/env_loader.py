@@ -9,6 +9,9 @@ load_dotenv()
 
 
 class Config:
+
+    base_dir: str = os.getenv('BASE_DIR')
+
     allowed_extensions: list = os.getenv('ALLOWED_EXTENSIONS').split(",")
 
     max_file_size: int = int(os.getenv('MAX_FILE_SIZE'))
@@ -29,7 +32,3 @@ class Config:
     redis_max_count: int = int(os.getenv('REDIS_MAX_COUNT'))  # maximal number of saved analysis results
 
     redis_record_expire: int = int(os.getenv('REDIS_RECORD_EXPIRE'))  # lifetime of record
-
-    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    if not os.path.isabs(upload_folder):
-        upload_folder = os.path.join(BASE_DIR, upload_folder)

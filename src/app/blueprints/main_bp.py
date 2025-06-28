@@ -3,7 +3,6 @@ from flask import (
     render_template,
     request,
     session,
-    make_response,
     current_app,
 )
 
@@ -53,3 +52,8 @@ def get_result_by_id(analysis_id: str):
         'partials/error.html',
         message='Not found'
     )
+
+
+@main_bp.route("/download-<path>", methods=['GET'])
+def download(path: str):
+    pass
