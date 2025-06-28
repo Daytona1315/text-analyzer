@@ -43,6 +43,7 @@ def get_result_by_id(analysis_id: str):
     redis = current_app.extensions['redis_service']
     user_id: str = session['user_id']
     result: dict = redis.analysis_result_get(user_id, analysis_id)
+    session['active_analysis'] = analysis_id
     if result:
         return render_template(
             'partials/result.html',
@@ -52,8 +53,3 @@ def get_result_by_id(analysis_id: str):
         'partials/error.html',
         message='Not found'
     )
-
-
-@main_bp.route("/download-<path>", methods=['GET'])
-def download(path: str):
-    pass
