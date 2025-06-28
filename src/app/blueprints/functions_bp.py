@@ -35,7 +35,7 @@ def lemmatization():
     if not result:
         return render_template(
             'partials/error.html',
-            message='The language of the text is undefined or the model not loaded'
+            message='The language of the text is undefined. Try longer text.'
         )
     path = FileService.write_csv(result)
     return render_template(

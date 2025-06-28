@@ -51,7 +51,7 @@ class FileService:
         filename: str = f'{user_id}_file.csv'
         abs_path: str = os.path.join(Config.base_dir, Config.upload_folder, filename)
 
-        with open(abs_path, 'w', newline='', encoding='utf-8') as csvfile:
+        with open(abs_path, 'w', newline='', encoding='utf-8-sig') as csvfile:
             writer = csv.writer(csvfile)
             writer.writerow(text)
         return f'files/{filename}'

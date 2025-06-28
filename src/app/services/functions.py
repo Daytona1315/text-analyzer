@@ -68,11 +68,11 @@ class FunctionsService:
         analysis_id: str = session['active_result']
         analysis_result: dict = redis.analysis_result_get(user_id, analysis_id)
         text = " ".join(analysis_result['lists']['words'])
-        lang = detect_language(text)
-        if lang != 'ru' or lang != 'en':
-            return []
-        nlp = NLPModels.get(lang)
-        if not nlp:
-            return []
-        doc = nlp(text)
-        return [t.lemma_ for t in doc if not t.is_punct and not t.is_space]
+        lang: str = detect_language(text)
+        if lang == 'ru' or lang == 'en':
+            nlp = NLPModels.get(lang)
+            if not nlp:
+                return []
+            doc = nlp(text)
+            return [t.lemma_ for t in doc if not t.is_punct and not t.is_space]
+        return []
