@@ -1,6 +1,6 @@
 import redis
 
-from src.app.utils.env_loader import Config
+from src.app.utils.config import Config
 
 
 def get_redis_connection(db: int = 0, decode_responses: bool = True):

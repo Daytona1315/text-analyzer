@@ -1,13 +1,10 @@
-import os
 from flask import (
     Blueprint,
     render_template,
-    session,
 )
 
-from app.services.file import FileService
-from app.services.functions import FunctionsService
-from app.utils.env_loader import Config
+from src.app.services.file import FileService
+from src.app.utils.decorators import inject_functions_service
 
 functions_bp = Blueprint(
     name='functions',
@@ -16,26 +13,29 @@ functions_bp = Blueprint(
 
 
 @functions_bp.route('/word-cloud', methods=['GET'])
-def word_cloud():
-    svg_str: str = FunctionsService.generate_word_cloud()
-    if not svg_str:
-        return render_template(
-            'partials/error.html',
-            message='Not enough words to illustrate'
-        )
+@inject_functions_service
+def word_cloud(functions_service):
+    svg: str = functions_service.generate_word_cloud()
     return render_template(
         'partials/word-cloud.html',
-        svg_str=svg_str,
+        svg=svg,
     )
 
 
 @functions_bp.route('/lemmatization', methods=['GET'])
-def lemmatization():
-    result: list = FunctionsService.generate_lemmatization()
-    if not result:
+@inject_functions_service
+def lemmatization(functions_service):
+    try:
+        result: list = functions_service.generate_lemmatization()
+    except (ValueError, RuntimeError):
         return render_template(
             'partials/error.html',
             message='The language of the text is undefined. Try longer text.'
+        )
+    except RuntimeError:
+        return render_template(
+            'partials/error.html',
+            message='The language models not loaded. Please, try later.'
         )
     path = FileService.write_csv(result)
     return render_template(

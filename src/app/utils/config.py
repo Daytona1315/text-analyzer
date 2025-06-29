@@ -24,6 +24,23 @@ class Config:
 
     upload_folder: str = os.getenv('UPLOAD_FOLDER')
 
+    # nlp
+    nlp_langs: list = os.getenv('NLP_LANGS').split(",")
+
+    nlp_models_raw = os.getenv("NLP_MODELS", "")
+    try:
+        nlp_models = dict(
+            item.split(":") for item in nlp_models_raw.split(",") if ":" in item
+        )
+        if not nlp_models:
+            raise ValueError
+    except Exception:
+        # fallback to default
+        nlp_models = {
+            "ru": "ru_core_news_sm",
+            "en": "en_core_web_sm"
+        }
+
     # redis
     redis_host: str = os.getenv('REDIS_HOST', 'redis')
 

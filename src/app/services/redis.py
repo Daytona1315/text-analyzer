@@ -1,7 +1,7 @@
 import json
 
 from src.db.redis_client import get_redis_connection
-from src.app.utils.env_loader import Config
+from src.app.utils.config import Config
 
 
 class RedisService:

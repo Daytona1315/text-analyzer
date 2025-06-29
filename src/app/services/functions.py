@@ -1,10 +1,8 @@
 import langid
 import spacy
-import base64
-from flask import (
-    current_app, session,
-)
 from wordcloud import WordCloud
+
+from app.utils.config import Config
 
 
 def detect_language(text: str) -> str:
@@ -20,10 +18,7 @@ class NLPModels:
 
     @classmethod
     def load_all(cls):
-        for lang, model_name in {
-            "en": "en_core_web_sm",
-            "ru": "ru_core_news_sm"
-        }.items():
+        for lang, model_name in Config.nlp_models.items():
             try:
                 cls.models[lang] = spacy.load(model_name, disable=['parser', 'ner'])
                 print(f"[NLPModels] Loaded model for: {lang}")
@@ -40,14 +35,13 @@ class FunctionsService:
     Contains methods for complex operations.
     """
 
-    @classmethod
-    def generate_word_cloud(cls) -> str:
-        redis = current_app.extensions['redis_service']
-        user_id: str = session['user_id']
-        analysis_id: str = session['active_result']
-        analysis_result: dict = redis.analysis_result_get(user_id, analysis_id)
-        
-        raw_words: list = analysis_result['lists']['words']
+    def __init__(self, redis, user_id, analysis_result):
+        self.redis = redis
+        self.user_id = user_id
+        self.analysis_result = analysis_result
+
+    def generate_word_cloud(self) -> str:
+        raw_words: list = self.analysis_result['lists']['words']
         word_list: list = [word for word in raw_words if len(word) >= 3]
         # generating word cloud in svg, coding it to bytes to transfer
         wc = (WordCloud(
@@ -57,22 +51,15 @@ class FunctionsService:
         )
               .generate(" ".join(word_list)))
         svg = wc.to_svg()
-        svg_str = base64.b64encode(svg.encode()).decode()
+        return svg
 
-        return svg_str
-    
-    @classmethod
-    def generate_lemmatization(cls) -> list:
-        redis = current_app.extensions['redis_service']
-        user_id: str = session['user_id']
-        analysis_id: str = session['active_result']
-        analysis_result: dict = redis.analysis_result_get(user_id, analysis_id)
-        text = " ".join(analysis_result['lists']['words'])
-        lang: str = detect_language(text)
-        if lang == 'ru' or lang == 'en':
-            nlp = NLPModels.get(lang)
-            if not nlp:
-                return []
-            doc = nlp(text)
-            return [t.lemma_ for t in doc if not t.is_punct and not t.is_space]
-        return []
+    def generate_lemmatization(self) -> list:
+        text = " ".join(self.analysis_result['lists']['words'])
+        lang = detect_language(text)
+        if lang not in Config.nlp_langs:
+            raise ValueError
+        nlp = NLPModels.get(lang)
+        if not nlp:
+            raise RuntimeError
+        doc = nlp(text)
+        return [t.lemma_ for t in doc if not t.is_punct and not t.is_space]

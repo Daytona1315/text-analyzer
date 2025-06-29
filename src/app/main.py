@@ -10,7 +10,7 @@ from werkzeug.exceptions import RequestEntityTooLarge
 
 from app.services.functions import NLPModels
 from app.utils.custom_exceptions import FileIsEmpty
-from src.app.utils.env_loader import Config
+from src.app.utils.config import Config
 from src.db.redis_client import get_redis_connection
 from src.app.utils.custom_exceptions import UnsupportedFileType
 

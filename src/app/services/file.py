@@ -9,7 +9,7 @@ from flask import (
 )
 from werkzeug.utils import secure_filename
 
-from src.app.utils.env_loader import Config
+from src.app.utils.config import Config
 from src.app.utils.custom_exceptions import UnsupportedFileType
 
 
