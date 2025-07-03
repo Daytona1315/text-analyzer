@@ -15,7 +15,6 @@ from flask import (
 
 from app.utils.custom_exceptions import TextAnalysisException
 from src.app.utils.custom_exceptions import FileException
-from src.app.utils.logging import logger
 
 
 class TextService:
@@ -62,7 +61,6 @@ class TextService:
                         output = subprocess.check_output(['catdoc', file_path])
                         text = output.decode('utf-8')
                     except subprocess.CalledProcessError as e:
-                        logger.error(f"Failed to call catdoc: {e}")
                         raise FileException()
 
                 case '.rtf':
@@ -71,24 +69,20 @@ class TextService:
                             data = f.read()
                             text = compressed_rtf.decompress(data).decode('utf-8', errors='ignore')
                     except Exception as e:
-                        logger.error(f"Failed to proceed RTF: {e}")
                         raise FileException()
 
                 case _:
-                    logger.warning(f"Unsupported file type: {extension}")
                     raise FileException(
-                        status_code=422,
+                        status=422,
                         message=f"Unsupported file type: {extension}",
                     )
 
         except Exception as e:
-            logger.exception(f"Failed to proceed {file_path}: {e}")
             raise FileException()
 
         if not text.strip():
-            logger.warning(f"File is empty: {file_path}")
             raise FileException(
-                status_code=422,
+                status=422,
                 message="File is empty."
             )
 
@@ -98,12 +92,6 @@ class TextService:
     def analyze_text(cls, text: str):
         """
         Analyzes a text string to extract lists and counts of its components.
-
-        Args:
-            text: The input string to analyze.
-
-        Returns:
-            A dictionary with the analysis results.
 
         """
         try:
@@ -137,5 +125,4 @@ class TextService:
 
             return result
         except Exception as e:
-            logger.error(f"Failed to run the analysis: {e}")
             raise TextAnalysisException()

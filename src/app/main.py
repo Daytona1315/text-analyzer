@@ -3,16 +3,13 @@ from datetime import timedelta
 from flask import (
     Flask,
     session,
-    render_template, make_response, Response,
 )
 from flask_session import Session
-from werkzeug.exceptions import RequestEntityTooLarge
 
+from app.error_handlers import register_error_handlers
 from app.services.functions import NLPModels
-from app.utils.custom_exceptions import FileException
 from src.app.utils.config import Config
 from src.db.redis_client import get_redis_connection
-from src.app.utils.custom_exceptions import UnsupportedFileTypeException
 
 
 def create_app():
@@ -21,6 +18,7 @@ def create_app():
     app.config['MAX_CONTENT_LENGTH'] = Config.max_file_size
     app.config['UPLOAD_FOLDER'] = Config.upload_folder
     app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=Config.session_lifetime)
+    register_error_handlers(app)
 
     # Redis connection block
 
@@ -65,45 +63,5 @@ def create_app():
         """
         if 'user_id' not in session:
             session['user_id'] = str(uuid.uuid4())
-
-    # 'error handler' section
-    @app.errorhandler(RequestEntityTooLarge)
-    def file_too_large(e) -> Response:
-        response = make_response(
-            render_template(
-                'partials/error.html',
-                message='File is too large'
-            )
-        )
-        response.headers['HX-Target'] = '#error'
-        return response
-
-    @app.errorhandler(UnsupportedFileTypeException)
-    def file_unsupported(e) -> Response:
-        response = make_response(
-            render_template(
-                'partials/error.html',
-                message='File is not allowed'
-            )
-        )
-        response.headers['HX-Target'] = '#error'
-        return response
-
-    @app.errorhandler(FileException)
-    def file_is_empty(e) -> Response:
-        response = make_response(
-            render_template(
-                'partials/error.html',
-                message='File is empty'
-            )
-        )
-        response.headers['HX-Target'] = '#error'
-        return response
-
-    @app.errorhandler(404)
-    def page_not_found(e) -> str:
-        return render_template(
-            '404.html'
-        )
 
     return app

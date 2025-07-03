@@ -5,11 +5,8 @@ from wordcloud import WordCloud
 from src.app.utils.custom_exceptions import (
     FunctionsException,
     NLPException,
-    NLPException,
-    NLPException,
 )
 from src.app.utils.config import Config
-from src.app.utils.logging import logger
 
 
 def detect_language(text: str) -> str:
@@ -30,7 +27,7 @@ class NLPModels:
                 cls.models[lang] = spacy.load(model_name, disable=['parser', 'ner'])
                 print(f"[NLPModels] Loaded model for: {lang}")
             except Exception as e:
-                logger.error(f"[NLPModels] Failed to load model for: {lang}. {e}")
+                raise NLPException()
 
     @classmethod
     def get(cls, lang: str):
@@ -61,7 +58,6 @@ class FunctionsService:
             svg = wc.to_svg()
             return svg
         except Exception as e:
-            logger.error(f"Failed to generate wordcloud: {e}")
             raise FunctionsException()
 
     def generate_lemmatization(self) -> list:
@@ -76,5 +72,4 @@ class FunctionsService:
         try:
             return [t.lemma_ for t in doc if not t.is_punct and not t.is_space]
         except Exception as e:
-            logger.error(f"Failed to generate lemmas: {e}")
             raise NLPException()

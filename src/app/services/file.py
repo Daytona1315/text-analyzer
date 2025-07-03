@@ -8,7 +8,6 @@ from flask import (
 from werkzeug.utils import secure_filename
 
 from src.app.utils.config import Config
-from src.app.utils.logging import logger
 from src.app.utils.custom_exceptions import (
     BaseAppException,
     FileException,
@@ -30,7 +29,6 @@ class FileService:
             return '.' in filename and \
                 filename.rsplit('.', 1)[1].lower() in Config.allowed_extensions
         except Exception as e:
-            logger.error(f"Something went wrong with {filename}: {e}")
             raise BaseAppException()
 
     @classmethod
@@ -40,13 +38,13 @@ class FileService:
         """
         if 'file' not in request.files:
             raise FileException(
-                status_code=422,
+                status=422,
                 message="No file."
             )
         file = request.files['file']
         if file.filename == '':
             raise FileException(
-                status_code=422,
+                status=422,
                 message="Filename is empty. Please, choose the correct file."
             )
         if file and FileService.allowed_file(file.filename):
@@ -57,7 +55,7 @@ class FileService:
             extension: str = os.path.splitext(filename)[1].lower()
             return file_path, extension
         raise FileException(
-            status_code=422,
+            status=422,
             message=f"Unsupported file type."
         )
 
@@ -72,5 +70,4 @@ class FileService:
                 writer.writerow(text)
             return f'files/{filename}'
         except Exception as e:
-            logger.error(f"Failed to write csv for {user_id}: {e}")
             raise CSVWriteException()

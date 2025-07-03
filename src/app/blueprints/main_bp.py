@@ -6,7 +6,10 @@ from flask import (
     current_app,
 )
 
-from app.utils.custom_exceptions import FileException
+from app.utils.custom_exceptions import (
+    FileException,
+    RedisException,
+)
 from src.app.services.text import TextService
 from src.app.services.file import FileService
 
@@ -49,7 +52,4 @@ def get_result_by_id(analysis_id: str):
             'partials/result.html',
             result=result
         )
-    return render_template(
-        'partials/error.html',
-        message='Not found'
-    )
+    raise RedisException

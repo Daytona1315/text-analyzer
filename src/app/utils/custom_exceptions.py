@@ -1,66 +1,50 @@
-class BaseAppException(Exception):
+from src.app.utils.logging import logger
 
-    default_message: int = "Something went"
+
+class BaseAppException(Exception):
+    default_message = "Something went wrong. Please, try later."
+    default_status = 500
 
     def __init__(
             self,
-            message: str = "Something went wrong. Please, try later",
-            status_code: int = 500,
+            message: str = None,
+            status: int = None,
+            exception: Exception = None,
     ):
-        super().__init__(message, status_code)
-        self.message = message
-        self.status_code = status_code
+        self.message = message or self.default_message
+        self.status = status or self.default_status
+        self.exception = exception
+
+        if exception:
+            logger.exception(
+                f"{self.__class__.__name__} raised. Reason:{self.message}",
+                exc_info=exception,
+            )
+        else:
+            logger.error(f"{self.__class__.__name__} raised. Reason: {self.message}")
+
+        super().__init__(self.message, self.status)
 
 
 class FileException(BaseAppException):
-    def __init__(
-            self,
-            status_code=500,
-            message="Failed to process the file. Please, try later."
-    ):
-        super().__init__(message, status_code)
+    default_message = "Failed to process the file. Please, try later."
 
 
 class TextAnalysisException(BaseAppException):
-    def __init__(
-            self,
-            status_code=500,
-            message="Failed to run the analysis. Please, try later."
-    ):
-        super().__init__(message, status_code)
+    default_message = "Failed to run the analysis. Please, try later."
 
 
 class CSVWriteException(BaseAppException):
-    def __init__(
-            self,
-            status_code=500,
-            message="Failed to write .csv file. Please, try later."
-    ):
-        super().__init__(message, status_code)
+    default_message = "Failed to write .csv file. Please, try later."
 
 
 class RedisException(BaseAppException):
-    def __init__(
-            self,
-            message="Redis error",
-            status_code=500,
-    ):
-        super().__init__(message, status_code)
+    default_message = "Operation not found. Please, try later."
 
 
 class FunctionsException(BaseAppException):
-    def __init__(
-            self,
-            status_code=500,
-            message="Failed to process. Please, try later."
-    ):
-        super().__init__(message, status_code)
+    default_message = "Failed to process. Please, try later."
 
 
 class NLPException(BaseAppException):
-    def __init__(
-            self,
-            status_code=500,
-            message="Failed to load necessary components. Please, try later."
-    ):
-        super().__init__(message, status_code)
+    default_message = "Failed to load necessary components. Please, try later."
