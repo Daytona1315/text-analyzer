@@ -1,7 +1,14 @@
 import json
 
+from redis import RedisError
+
 from src.db.redis_client import get_redis_connection
 from src.app.utils.config import Config
+from src.app.utils.logging import logger
+from src.app.utils.custom_exceptions import (
+    RedisException,
+    RedisException,
+)
 
 
 class RedisService:
@@ -11,30 +18,44 @@ class RedisService:
     def __init__(self):
         self.redis = get_redis_connection(db=1, decode_responses=True)
 
-    def analysis_result_save(self, user_id: str, data: dict):
-        self.redis.lpush(user_id, json.dumps(data))
-        if self.redis.ttl(user_id) == -1:
-            self.redis.expire(user_id, Config.redis_record_expire)
-        self.redis.ltrim(user_id, 0, Config.redis_max_count)
+    def analysis_result_save(self, user_id: str, data: dict) -> None:
+        p = self.redis.pipeline()
+        try:
+            p.lpush(user_id, json.dumps(data))
+            p.expire(user_id, Config.redis_record_expire)
+            p.ltrim(user_id, 0, Config.redis_max_count)
+            p.execute()
+        except RedisError as e:
+            logger.error(f"Redis error for user {user_id}: {e}")
+            raise RedisException()
 
     def analysis_result_get(self, user_id: str, analysis_id: str) -> dict | None:
-        user_data: list = self.redis.lrange(user_id, 0, Config.redis_max_count)
-        for record in user_data:
-            dictionary: dict = json.loads(record)
-            if dictionary['id'] == analysis_id:
-                return dictionary
+        for record in self.redis.lrange(user_id, 0, Config.redis_max_count):
+            try:
+                d = json.loads(record)
+                if d.get('id') == analysis_id:
+                    return d
+            except json.JSONDecodeError:
+                continue
         return None
 
-    def analysis_result_clear(self, user_id: str):
-        self.redis.delete(user_id)
+    def analysis_result_clear(self, user_id: str) -> None:
+        try:
+            self.redis.delete(user_id)
+        except RedisError as e:
+            logger.error(f"Redis error for user {user_id}: {e}")
 
-    def analysis_history_get(self, user_id: str) -> list:
-        raw_list = self.redis.lrange(user_id, 0, Config.redis_max_count)
-        return [
-            {
-                'id': data['id'],
-                'short_preview': data['short_preview']
-            }
-            for item in raw_list
-            for data in [json.loads(item)]
-        ]
+    def analysis_history_get(self, user_id: str):
+        try:
+            raw_list = self.redis.lrange(user_id, 0, Config.redis_max_count)
+            return [
+                {
+                    'id': d['id'],
+                    'short_preview': d['short_preview']
+                }
+                for item in raw_list
+                if (d := json.loads(item))
+            ]
+        except RedisError as e:
+            logger.error(f"Redis error for user {user_id}: {e}")
+            raise RedisException()

@@ -6,7 +6,7 @@ from flask import (
     current_app,
 )
 
-from app.utils.custom_exceptions import FileIsEmpty
+from app.utils.custom_exceptions import FileException
 from src.app.services.text import TextService
 from src.app.services.file import FileService
 
@@ -34,7 +34,7 @@ def upload_file():
     file_path, extension = FileService.load_file(request)
     text = TextService.extract_text(file_path=file_path, extension=extension)
     if not text or not text.strip():
-        raise FileIsEmpty()
+        raise FileException()
     return TextService.provide_text_analysis(text)
 
 

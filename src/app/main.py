@@ -9,10 +9,10 @@ from flask_session import Session
 from werkzeug.exceptions import RequestEntityTooLarge
 
 from app.services.functions import NLPModels
-from app.utils.custom_exceptions import FileIsEmpty
+from app.utils.custom_exceptions import FileException
 from src.app.utils.config import Config
 from src.db.redis_client import get_redis_connection
-from src.app.utils.custom_exceptions import UnsupportedFileType
+from src.app.utils.custom_exceptions import UnsupportedFileTypeException
 
 
 def create_app():
@@ -78,7 +78,7 @@ def create_app():
         response.headers['HX-Target'] = '#error'
         return response
 
-    @app.errorhandler(UnsupportedFileType)
+    @app.errorhandler(UnsupportedFileTypeException)
     def file_unsupported(e) -> Response:
         response = make_response(
             render_template(
@@ -89,7 +89,7 @@ def create_app():
         response.headers['HX-Target'] = '#error'
         return response
 
-    @app.errorhandler(FileIsEmpty)
+    @app.errorhandler(FileException)
     def file_is_empty(e) -> Response:
         response = make_response(
             render_template(
