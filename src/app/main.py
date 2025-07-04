@@ -13,26 +13,20 @@ from src.db.redis_client import get_redis_connection
 
 
 def create_app():
-    app = Flask(__name__)
+    app: Flask = Flask(__name__)
     app.secret_key = Config.secret_key
     app.config['MAX_CONTENT_LENGTH'] = Config.max_file_size
     app.config['UPLOAD_FOLDER'] = Config.upload_folder
     app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=Config.session_lifetime)
     register_error_handlers(app)
 
-    # Redis connection block
-
-    # redis for sessions
-    # as Flask-Session expect to work with bytes,
-    # decode_responses parameter set to False
-    app.config['SESSION_TYPE'] = 'redis'
-    app.config['SESSION_REDIS'] = get_redis_connection(db=0, decode_responses=False)
-    Session(app)
-
     # preloading NLP models
     NLPModels.load_all()
 
-    # redis for business logic
+    # redis
+    app.config['SESSION_TYPE'] = 'redis'
+    app.config['SESSION_REDIS'] = get_redis_connection(db=0, decode_responses=False)
+    Session(app)
     from src.app.services.redis import RedisService
     app.extensions['redis_service'] = RedisService()
 

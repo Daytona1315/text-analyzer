@@ -41,7 +41,9 @@ class FunctionsService:
         text = " ".join(self.analysis_result['lists']['words'])
         lang = detect_language(text)
         if lang not in Config.nlp_langs:
-            raise NLPException()
+            raise NLPException(
+                message='Language is undefined. Try longer text.'
+            )
         nlp = NLPModels.get(lang)
         if not nlp:
             raise NLPException()
