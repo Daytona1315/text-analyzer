@@ -1,8 +1,5 @@
 from flask import render_template
-from werkzeug.exceptions import (
-    RequestEntityTooLarge,
-    HTTPException,
-)
+from werkzeug.exceptions import HTTPException
 
 from src.app.utils.logging import logger
 from src.app.utils.custom_exceptions import BaseAppException
@@ -14,13 +11,6 @@ def register_error_handlers(app):
         return render_template(
             'partials/error.html',
             message=e.message
-        )
-
-    @app.errorhandler(RequestEntityTooLarge)
-    def file_too_large(e):
-        return render_template(
-            'partials/error.html',
-            message='File is too large.'
         )
 
     @app.errorhandler(HTTPException)

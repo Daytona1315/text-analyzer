@@ -8,7 +8,7 @@ console_handler = logging.StreamHandler()
 console_handler.setLevel(logging.INFO)
 
 formatter = logging.Formatter(
-    "[%(asctime)s] %(levelname)s in %(module)s: %(message)s"
+    "[%(asctime)s] %(levelname)s: %(message)s"
 )
 console_handler.setFormatter(formatter)
 

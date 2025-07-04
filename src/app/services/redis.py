@@ -4,9 +4,7 @@ from redis import RedisError
 
 from src.db.redis_client import get_redis_connection
 from src.app.utils.config import Config
-from src.app.utils.custom_exceptions import (
-    RedisException,
-)
+from src.app.utils.custom_exceptions import RedisException
 
 
 class RedisService:
@@ -24,7 +22,7 @@ class RedisService:
             p.ltrim(user_id, 0, Config.redis_max_count)
             p.execute()
         except RedisError as e:
-            raise RedisException()
+            raise RedisException(exception=e)
 
     def analysis_result_get(self, user_id: str, analysis_id: str) -> dict | None:
         for record in self.redis.lrange(user_id, 0, Config.redis_max_count):
@@ -40,7 +38,7 @@ class RedisService:
         try:
             self.redis.delete(user_id)
         except RedisError as e:
-            raise RedisException()
+            raise RedisException(exception=e)
 
     def analysis_history_get(self, user_id: str):
         try:
@@ -54,4 +52,4 @@ class RedisService:
                 if (d := json.loads(item))
             ]
         except RedisError as e:
-            raise RedisException()
+            raise RedisException(exception=e)

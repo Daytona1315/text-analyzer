@@ -29,7 +29,7 @@ class FileService:
             return '.' in filename and \
                 filename.rsplit('.', 1)[1].lower() in Config.allowed_extensions
         except Exception as e:
-            raise BaseAppException()
+            raise BaseAppException(exception=e)
 
     @classmethod
     def load_file(cls, request: Request) -> tuple:
@@ -70,4 +70,4 @@ class FileService:
                 writer.writerow(text)
             return f'files/{filename}'
         except Exception as e:
-            raise CSVWriteException()
+            raise CSVWriteException(exception=e)

@@ -11,19 +11,19 @@ class BaseAppException(Exception):
             status: int = None,
             exception: Exception = None,
     ):
-        self.message = message or self.default_message
-        self.status = status or self.default_status
+        self.message = message or self.__class__.default_message
+        self.status = status or self.__class__.default_status
         self.exception = exception
 
         if exception:
             logger.exception(
-                f"{self.__class__.__name__} raised. Reason:{self.message}",
+                f"{self.__class__.__name__} raised.",
                 exc_info=exception,
             )
         else:
-            logger.error(f"{self.__class__.__name__} raised. Reason: {self.message}")
+            logger.error(f"{self.__class__.__name__} raised.")
 
-        super().__init__(self.message, self.status)
+        super().__init__(self.message)
 
 
 class FileException(BaseAppException):

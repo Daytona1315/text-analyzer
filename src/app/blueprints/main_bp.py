@@ -6,7 +6,7 @@ from flask import (
     current_app,
 )
 
-from app.utils.custom_exceptions import (
+from src.app.utils.custom_exceptions import (
     FileException,
     RedisException,
 )
@@ -52,4 +52,4 @@ def get_result_by_id(analysis_id: str):
             'partials/result.html',
             result=result
         )
-    raise RedisException
+    raise RedisException()

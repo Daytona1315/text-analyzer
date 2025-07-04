@@ -13,7 +13,7 @@ from flask import (
     make_response,
 )
 
-from app.utils.custom_exceptions import TextAnalysisException
+from src.app.utils.custom_exceptions import TextAnalysisException
 from src.app.utils.custom_exceptions import FileException
 
 
@@ -61,7 +61,7 @@ class TextService:
                         output = subprocess.check_output(['catdoc', file_path])
                         text = output.decode('utf-8')
                     except subprocess.CalledProcessError as e:
-                        raise FileException()
+                        raise FileException(exception=e)
 
                 case '.rtf':
                     try:
@@ -69,7 +69,7 @@ class TextService:
                             data = f.read()
                             text = compressed_rtf.decompress(data).decode('utf-8', errors='ignore')
                     except Exception as e:
-                        raise FileException()
+                        raise FileException(exception=e)
 
                 case _:
                     raise FileException(
@@ -78,7 +78,7 @@ class TextService:
                     )
 
         except Exception as e:
-            raise FileException()
+            raise FileException(exception=e)
 
         if not text.strip():
             raise FileException(
@@ -106,6 +106,7 @@ class TextService:
             whitespace_count = len(re.findall(r'\s', text))
             # calculate non-whitespace character count.
             chars_no_spaces_count = len(text) - whitespace_count
+            x = 1 / 0  # ERROR
             result = {
                 'id': str(uuid.uuid4()),
                 'short_preview': text[:40] + '...' if len(text) > 140 else text,
@@ -125,4 +126,4 @@ class TextService:
 
             return result
         except Exception as e:
-            raise TextAnalysisException()
+            raise TextAnalysisException(exception=e)
