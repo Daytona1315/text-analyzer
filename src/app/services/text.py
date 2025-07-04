@@ -106,7 +106,6 @@ class TextService:
             whitespace_count = len(re.findall(r'\s', text))
             # calculate non-whitespace character count.
             chars_no_spaces_count = len(text) - whitespace_count
-            x = 1 / 0  # ERROR
             result = {
                 'id': str(uuid.uuid4()),
                 'short_preview': text[:40] + '...' if len(text) > 140 else text,
