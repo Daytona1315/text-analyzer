@@ -6,8 +6,9 @@ from flask import (
 )
 from flask_session import Session
 
-from app.error_handlers import register_error_handlers
-from app.services.nlp import NLPModels
+from src.app.utils.logging import log
+from src.app.error_handlers import register_error_handlers
+from src.app.services.nlp import NLPModels
 from src.app.utils.config import Config
 from src.db.redis_client import get_redis_connection
 

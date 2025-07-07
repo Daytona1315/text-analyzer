@@ -19,6 +19,7 @@ wordcloud = "^1.9.4"
 compressed-rtf = "^1.0.7"
 spacy = "^3.8.7"
 langid = "^1.1.6"
+colorlog = "^6.9.0"
 
 [build-system]
 requires = ["poetry-core"]

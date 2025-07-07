@@ -1,7 +1,7 @@
 from flask import render_template
 from werkzeug.exceptions import HTTPException
 
-from src.app.utils.logging import logger
+from src.app.utils.logging import log
 from src.app.utils.custom_exceptions import BaseAppException
 
 
@@ -22,7 +22,7 @@ def register_error_handlers(app):
 
     @app.errorhandler(Exception)
     def handle_unexpected_exception(e: Exception):
-        logger.exception("Unexpected error occurred: %s", e)
+        log.exception("Unexpected error occurred: %s", e)
         return render_template(
             'partials/error.html',
             message='Something went wrong. Please, try later.'

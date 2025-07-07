@@ -1,4 +1,4 @@
-from src.app.utils.logging import logger
+from src.app.utils.logging import log
 
 
 class BaseAppException(Exception):
@@ -16,12 +16,12 @@ class BaseAppException(Exception):
         self.exception = exception
 
         if exception:
-            logger.exception(
+            log.exception(
                 f"{self.__class__.__name__} raised.",
                 exc_info=exception,
             )
         else:
-            logger.error(f"{self.__class__.__name__} raised.")
+            log.error(f"{self.__class__.__name__} raised.")
 
         super().__init__(self.message)
 

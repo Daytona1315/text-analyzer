@@ -1,6 +1,6 @@
 from wordcloud import WordCloud
 
-from app.services.nlp import (
+from src.app.services.nlp import (
     detect_language,
     NLPModels,
 )

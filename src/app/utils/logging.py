@@ -1,17 +1,16 @@
 import logging
+from colorlog import ColoredFormatter
 
 
-logger = logging.getLogger("TextAnalyzer")
-logger.setLevel(logging.INFO)
+LOGFORMAT = "  %(log_color)s%(levelname)-8s%(reset)s | %(log_color)s%(message)s%(reset)s"
+
+log = logging.getLogger("TextAnalyzer")
+log.setLevel(logging.INFO)
 
 console_handler = logging.StreamHandler()
 console_handler.setLevel(logging.INFO)
 
-formatter = logging.Formatter(
-    "[%(asctime)s] %(levelname)s: %(message)s"
-)
+formatter = ColoredFormatter(LOGFORMAT)
 console_handler.setFormatter(formatter)
 
-console_handler.setFormatter(formatter)
-
-logger.addHandler(console_handler)
+log.addHandler(console_handler)

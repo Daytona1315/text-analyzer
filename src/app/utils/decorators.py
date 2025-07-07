@@ -4,8 +4,8 @@ from flask import (
     session,
 )
 
-from app.services.functions import FunctionsService
-from app.services.redis import RedisService
+from src.app.services.functions import FunctionsService
+from src.app.services.redis import RedisService
 
 
 def inject_functions_service(func):
