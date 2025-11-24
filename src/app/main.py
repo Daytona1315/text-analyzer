@@ -38,10 +38,9 @@ def create_app():
 
     # redis
     app.config["SESSION_TYPE"] = "redis"
-    app.config["SESSION_REDIS"] = get_redis_connection(db=0, decode_responses=False)
+    app.config["SESSION_REDIS"] = get_redis_connection(db=Config.redis_db, decode_responses=False)
     Session(app)
     from src.app.services.redis import RedisService
-
     app.extensions["redis_service"] = RedisService()
 
     from src.app.blueprints.main_blueprint import main_blueprint

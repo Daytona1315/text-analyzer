@@ -45,6 +45,8 @@ class Config:
 
     redis_port: int = int(os.getenv("REDIS_PORT", 6379))
 
+    redis_db: int = int(os.getenv("REDIS_DB", 0))
+
     redis_max_count: int = int(
         os.getenv("REDIS_MAX_COUNT")
     )  # maximal number of saved analysis results
@@ -54,5 +56,6 @@ class Config:
     )  # lifetime of record
 
     # celery
-    celery_broker_url: str = f"redis://{redis_host}:{redis_port}/0"
-    celery_result_backend: str = f"redis://{redis_host}:{redis_port}/0"
+    selery_db: int = int(os.getenv("SELERY_DB", 0))
+    celery_broker_url: str = f"redis://{redis_host}:{redis_port}/{selery_db}"
+    celery_result_backend: str = f"redis://{redis_host}:{redis_port}/{selery_db}"
