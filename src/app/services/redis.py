@@ -11,6 +11,7 @@ class RedisService:
     """
     Contains methods to work with Redis database
     """
+
     def __init__(self):
         self.redis = get_redis_connection(db=1, decode_responses=True)
 
@@ -28,7 +29,7 @@ class RedisService:
         for record in self.redis.lrange(user_id, 0, Config.redis_max_count):
             try:
                 d = json.loads(record)
-                if d.get('id') == analysis_id:
+                if d.get("id") == analysis_id:
                     return d
             except json.JSONDecodeError:
                 continue
@@ -44,10 +45,7 @@ class RedisService:
         try:
             raw_list = self.redis.lrange(user_id, 0, Config.redis_max_count)
             return [
-                {
-                    'id': d['id'],
-                    'short_preview': d['short_preview']
-                }
+                {"id": d["id"], "short_preview": d["short_preview"]}
                 for item in raw_list
                 if (d := json.loads(item))
             ]

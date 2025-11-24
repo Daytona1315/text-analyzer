@@ -6,10 +6,10 @@ class BaseAppException(Exception):
     default_status = 500
 
     def __init__(
-            self,
-            message: str = None,
-            status: int = None,
-            exception: Exception = None,
+        self,
+        message: str = None,
+        status: int = None,
+        exception: Exception = None,
     ):
         self.message = message or self.__class__.default_message
         self.status = status or self.__class__.default_status

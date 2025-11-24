@@ -2,7 +2,9 @@ import logging
 from colorlog import ColoredFormatter
 
 
-LOGFORMAT = "  %(log_color)s%(levelname)-8s%(reset)s | %(log_color)s%(message)s%(reset)s"
+LOGFORMAT = (
+    "  %(log_color)s%(levelname)-8s%(reset)s | %(log_color)s%(message)s%(reset)s"
+)
 
 log = logging.getLogger("TextAnalyzer")
 log.setLevel(logging.INFO)

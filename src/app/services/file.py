@@ -26,8 +26,10 @@ class FileService:
         Prevents from filename injections or smth, flask docs recommend to do this.
         """
         try:
-            return '.' in filename and \
-                filename.rsplit('.', 1)[1].lower() in Config.allowed_extensions
+            return (
+                "." in filename
+                and filename.rsplit(".", 1)[1].lower() in Config.allowed_extensions
+            )
         except Exception as e:
             raise BaseAppException(exception=e)
 
@@ -36,38 +38,34 @@ class FileService:
         """
         Checks the file and secures it. Returns (path, extension) or an error message.
         """
-        if 'file' not in request.files:
+        if "file" not in request.files:
+            raise FileException(status=422, message="No file.")
+        file = request.files["file"]
+        if file.filename == "":
             raise FileException(
                 status=422,
-                message="No file."
-            )
-        file = request.files['file']
-        if file.filename == '':
-            raise FileException(
-                status=422,
-                message="Filename is empty. Please, choose the correct file."
+                message="Filename is empty. Please, choose the correct file.",
             )
         if file and FileService.allowed_file(file.filename):
-            user_id: str = session['user_id']
+            user_id: str = session["user_id"]
             filename: str = f"{user_id}_{secure_filename(file.filename)}"
-            file_path: str = Config.base_dir + '/' + Config.upload_folder + '/' + filename
+            file_path: str = (
+                Config.base_dir + "/" + Config.upload_folder + "/" + filename
+            )
             file.save(file_path)
             extension: str = os.path.splitext(filename)[1].lower()
             return file_path, extension
-        raise FileException(
-            status=422,
-            message=f"Unsupported file type."
-        )
+        raise FileException(status=422, message=f"Unsupported file type.")
 
     @classmethod
     def write_csv(cls, text: list) -> str:
-        user_id: str = session['user_id']
-        filename: str = f'{user_id}_file.csv'
+        user_id: str = session["user_id"]
+        filename: str = f"{user_id}_file.csv"
         abs_path: str = os.path.join(Config.base_dir, Config.upload_folder, filename)
         try:
-            with open(abs_path, 'w', newline='', encoding='utf-8-sig') as csvfile:
+            with open(abs_path, "w", newline="", encoding="utf-8-sig") as csvfile:
                 writer = csv.writer(csvfile)
                 writer.writerow(text)
-            return f'files/{filename}'
+            return f"files/{filename}"
         except Exception as e:
             raise CSVWriteException(exception=e)

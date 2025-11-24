@@ -22,28 +22,25 @@ class FunctionsService:
         self.analysis_result = analysis_result
 
     def generate_word_cloud(self) -> str:
-        raw_words: list = self.analysis_result['lists']['words']
+        raw_words: list = self.analysis_result["lists"]["words"]
         word_list: list = [word for word in raw_words if len(word) >= 3]
         # generating word cloud in svg, coding it to bytes to transfer
         try:
-            wc = (WordCloud(
-                background_color='white',
+            wc = WordCloud(
+                background_color="white",
                 width=1000,
                 height=1000,
-            )
-                  .generate(" ".join(word_list)))
+            ).generate(" ".join(word_list))
             svg = wc.to_svg()
             return svg
         except Exception as e:
             raise FunctionsException(exception=e)
 
     def generate_lemmatization(self) -> list:
-        text = " ".join(self.analysis_result['lists']['words'])
+        text = " ".join(self.analysis_result["lists"]["words"])
         lang = detect_language(text)
         if lang not in Config.nlp_langs:
-            raise NLPException(
-                message='Language is undefined. Try longer text.'
-            )
+            raise NLPException(message="Language is undefined. Try longer text.")
         nlp = NLPModels.get(lang)
         if not nlp:
             raise NLPException()

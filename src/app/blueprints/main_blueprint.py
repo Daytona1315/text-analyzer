@@ -14,25 +14,25 @@ from src.app.services.text import TextService
 from src.app.services.file import FileService
 
 
-main_bp = Blueprint(
-    name='main',
+main_blueprint = Blueprint(
+    name="main",
     import_name=__name__,
 )
 
 
-@main_bp.route("/", methods=["GET"])
+@main_blueprint.route("/", methods=["GET"])
 def root():
-    session['init'] = True
+    session["init"] = True
     return render_template("index.html")
 
 
-@main_bp.route("/analyze", methods=["POST"])
+@main_blueprint.route("/analyze", methods=["POST"])
 def analyze_text():
     text = request.form.get("text")
     return TextService.provide_text_analysis(text)
 
 
-@main_bp.route("/upload", methods=["POST"])
+@main_blueprint.route("/upload", methods=["POST"])
 def upload_file():
     file_path, extension = FileService.load_file(request)
     text = TextService.extract_text(file_path=file_path, extension=extension)
@@ -41,15 +41,12 @@ def upload_file():
     return TextService.provide_text_analysis(text)
 
 
-@main_bp.route("/result-by-id/<analysis_id>", methods=["GET"])
+@main_blueprint.route("/result-by-id/<analysis_id>", methods=["GET"])
 def get_result_by_id(analysis_id: str):
-    redis = current_app.extensions['redis_service']
-    user_id: str = session['user_id']
+    redis = current_app.extensions["redis_service"]
+    user_id: str = session["user_id"]
     result: dict = redis.analysis_result_get(user_id, analysis_id)
-    session['active_analysis'] = analysis_id
+    session["active_analysis"] = analysis_id
     if result:
-        return render_template(
-            'partials/result.html',
-            result=result
-        )
+        return render_template("partials/result.html", result=result)
     raise RedisException()

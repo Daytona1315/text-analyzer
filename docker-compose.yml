@@ -47,5 +47,17 @@ services:
     networks:
       - appnet
 
+  worker:
+    build: .
+    container_name: "worker"
+    command: celery -A src.celery.celery_worker worker --loglevel=info
+    env_file:
+      - .env
+    depends_on:
+      redis:
+        condition: service_healthy
+    networks:
+      - appnet
+
 networks:
   appnet:

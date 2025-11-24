@@ -15,13 +15,14 @@ class NLPModels:
     """
     Loads NLP models
     """
+
     models = {}
 
     @classmethod
     def load_all(cls):
         for lang, model_name in Config.nlp_models.items():
             try:
-                cls.models[lang] = spacy.load(model_name, disable=['parser', 'ner'])
+                cls.models[lang] = spacy.load(model_name, disable=["parser", "ner"])
                 log.info(f"Loaded model for: {lang}")
             except Exception as e:
                 raise NLPException(exception=e)
