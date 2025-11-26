@@ -28,7 +28,7 @@ def create_app():
         CELERY=dict(
             broker_url=Config.celery_broker_url,
             result_backend=Config.celery_result_backend,
-            task_ignore_result=True,
+            task_ignore_result=False,
         )
     )
     celery_init_app(app)
