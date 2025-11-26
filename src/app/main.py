@@ -6,7 +6,7 @@ from flask import (
 )
 from flask_session import Session
 
-from src.celery.init import celery_init_app
+from src.celery.celery_init import celery_init_app
 from src.app.error_handlers import register_error_handlers
 from src.app.services.nlp import NLPModels
 from src.app.utils.config import Config
