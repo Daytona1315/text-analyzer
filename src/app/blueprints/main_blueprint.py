@@ -48,7 +48,7 @@ def task_status(task_id: str):
     task_result = AsyncResult(task_id)
     if task_result.successful():
         result = task_result.result
-        session["active_analysis"] = result["id"]
+        session["active_analysis_id"] = result["id"]
         result_html = render_template("partials/result.html", result=result)
         response = make_response(result_html)
         response.headers["HX-Trigger"] = "historyNeedsUpdate"
@@ -68,7 +68,7 @@ def get_result_by_id(analysis_id: str):
     redis = current_app.extensions["redis_service"]
     user_id: str = session["user_id"]
     result: dict = redis.analysis_result_get(user_id, analysis_id)
-    session["active_analysis"] = analysis_id
+    session["active_analysis_id"] = analysis_id
     if result:
         return render_template("partials/result.html", result=result)
     raise RedisException()

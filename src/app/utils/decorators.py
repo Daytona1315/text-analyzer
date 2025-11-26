@@ -13,7 +13,7 @@ def inject_functions_service(func):
     def wrapper(*args, **kwargs):
         redis = current_app.extensions["redis_service"]
         user_id: str = session["user_id"]
-        analysis_id: str = session["active_result"]
+        analysis_id: str = session["active_analysis_id"]
         analysis_result: dict = redis.analysis_result_get(user_id, analysis_id)
 
         kwargs["functions_service"] = FunctionsService(
