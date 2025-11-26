@@ -37,7 +37,7 @@ class Config:
         nlp_models = {"ru": "ru_core_news_sm", "en": "en_core_web_sm"}
 
     # Redis
-    redis_host: str = os.getenv("REDIS_HOST", "redis")
+    redis_host: str = os.getenv("REDIS_HOST", "127.0.0.1")
     redis_port: int = int(os.getenv("REDIS_PORT", 6379))
     redis_db: int = int(os.getenv("REDIS_DB", 0))
     redis_max_count: int = int(os.getenv("REDIS_MAX_COUNT", 30))
