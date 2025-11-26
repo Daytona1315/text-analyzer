@@ -28,6 +28,7 @@ def create_app():
             broker_url=Config.celery_broker_url,
             result_backend=Config.celery_result_backend,
             task_ignore_result=False,
+            include=["src.broker.tasks"],
         )
     )
     celery_init_app(app)

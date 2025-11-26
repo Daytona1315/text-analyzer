@@ -9,7 +9,6 @@ from flask import (
     session,
     render_template,
 )
-from src.app.utils.logging import log
 from src.app.utils.custom_exceptions import TextAnalysisException
 from src.app.utils.custom_exceptions import FileException
 
@@ -22,14 +21,8 @@ class TextService:
     @classmethod
     def provide_text_analysis(cls, text: str) -> str:
         from src.broker.tasks import analyze_text_task
-
         user_id: str = session["user_id"]
-
-        log.info(f"🚀 [Flask] Preparing to send task for User: {user_id}")
-
         task = analyze_text_task.delay(text, user_id)
-
-        log.info(f"✅ [Flask] Task sent! ID: {task.id}")
 
         return render_template("partials/processing.html", task_id=task.id)
 
