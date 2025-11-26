@@ -77,4 +77,7 @@ def create_app():
         if "user_id" not in session:
             session["user_id"] = str(uuid.uuid4())
 
+    print(f"--- APP STARTUP DEBUG ---")
+    print(f"DEBUG: App Broker URL = {Config.celery_broker_url}")
+
     return app
