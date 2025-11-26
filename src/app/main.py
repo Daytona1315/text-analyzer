@@ -23,7 +23,7 @@ def create_app():
     )
     register_error_handlers(app)
 
-    # broker config
+    # celery config
     app.config.from_mapping(
         CELERY=dict(
             broker_url=Config.celery_broker_url,
@@ -32,6 +32,8 @@ def create_app():
         )
     )
     celery_init_app(app)
+
+    import src.broker.tasks
 
     # preloading NLP models
     NLPModels.load_all()
@@ -53,8 +55,6 @@ def create_app():
     app.register_blueprint(main_blueprint)
     app.register_blueprint(history_blueprint)
     app.register_blueprint(functions_blueprint)
-
-    import src.broker.tasks
 
     # 'before request' section
     @app.before_request
