@@ -44,7 +44,7 @@ def upload_file():
 
 
 @main_blueprint.route("/status/<task_id>", methods=["GET"])
-def status_task(task_id: str):
+def task_status(task_id: str):
     task_result = AsyncResult(task_id)
     if task_result.ready():
         result = task_result.result
