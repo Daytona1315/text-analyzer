@@ -13,20 +13,23 @@ def detect_language(text: str) -> str:
 
 class NLPModels:
     """
-    Loads NLP models
+    Manages NLP models with Lazy Loading pattern.
+    Models are loaded into memory only upon first request.
     """
-
     models = {}
 
     @classmethod
-    def load_all(cls):
-        for lang, model_name in Config.nlp_models.items():
+    def get(cls, lang: str):
+
+        if lang not in cls.models:
+            model_name = Config.nlp_models.get(lang)
+
+            if not model_name:
+                return None
+
             try:
-                cls.models[lang] = spacy.load(model_name, disable=["parser", "ner"])
-                log.info(f"Loaded model for: {lang}")
+                cls.models[lang] = spacy.load(model_name, disable=['parser', 'ner'])
             except Exception as e:
                 raise NLPException(exception=e)
 
-    @classmethod
-    def get(cls, lang: str):
-        return cls.models.get(lang)
+        return cls.models[lang]
