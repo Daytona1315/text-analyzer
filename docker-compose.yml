@@ -52,7 +52,7 @@ services:
   worker:
     build: .
     container_name: "worker"
-    command: celery -A src.celery.celery_worker worker --loglevel=info
+    command: broker -A src.broker.celery_worker worker --loglevel=info
     env_file:
       - .env
     depends_on:

@@ -43,7 +43,7 @@ class Config:
         os.getenv("REDIS_RECORD_EXPIRE")
     )  # lifetime of record
 
-    # celery
+    # broker
     celery_db: int = int(os.getenv("CELERY_DB", 0))
     celery_broker_url: str = f"redis://{redis_host}:{redis_port}/{celery_db}"
     celery_result_backend: str = f"redis://{redis_host}:{redis_port}/{celery_db}"

@@ -6,7 +6,7 @@ from flask import (
 )
 from flask_session import Session
 
-from src.celery.celery_init import celery_init_app
+from src.broker.celery_init import celery_init_app
 from src.app.error_handlers import register_error_handlers
 from src.app.services.nlp import NLPModels
 from src.app.utils.config import Config
@@ -23,7 +23,7 @@ def create_app():
     )
     register_error_handlers(app)
 
-    # celery config
+    # broker config
     app.config.from_mapping(
         CELERY=dict(
             broker_url=Config.celery_broker_url,

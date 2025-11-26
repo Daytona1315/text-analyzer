@@ -24,7 +24,7 @@ class TextService:
 
     @classmethod
     def provide_text_analysis(cls, text: str) -> Response:
-        from src.celery.tasks import analyze_text_task
+        from src.broker.tasks import analyze_text_task
 
         user_id: str = session["user_id"]
         task = analyze_text_task.delay(text, user_id)
