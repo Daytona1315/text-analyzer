@@ -2,8 +2,7 @@ import os
 from dotenv import load_dotenv
 from src.app.utils.strtobool import strtobool
 
-# load_dotenv() остаётся: он ничего не сломает, если файла нет,
-# но поможет, если вы создадите .env локально для тестов.
+
 load_dotenv()
 
 
