@@ -51,7 +51,7 @@ def task_status(task_id: str):
     log.info(f"🔎 [Flask] Polling task {task_id} | State: {task_result.state} | Ready: {task_result.ready()}")
     if task_result.ready():
         result = task_result.result
-        session["active_result"] = result["id"]
+        session["active_analysis"] = result["id"]
         result_html = render_template("partials/result.html", result=result)
         response = make_response(result_html)
         response.headers["HX-Trigger"] = "historyNeedsUpdate"
