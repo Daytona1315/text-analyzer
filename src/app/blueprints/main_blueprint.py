@@ -56,7 +56,9 @@ def task_status(task_id: str):
     elif task_result.failed():
         error_msg = str(task_result.result)
         log.error(error_msg)
-        return render_template("partials/error.html", message=f"Task failed, please, try again")
+        return render_template(
+            "partials/error.html", message=f"Task failed, please, try again"
+        )
     else:
         return render_template("partials/processing.html", task_id=task_id)
 
