@@ -1,18 +1,25 @@
 FROM python:3.12-slim
 
-ENV PYTHONPATH="/app/src"
+ENV PYTHONPATH="/app/src" \
+    PYTHONUNBUFFERED=1 \
+    POETRY_VERSION=1.8.2 \
+    POETRY_HOME="/opt/poetry" \
+    POETRY_VIRTUALENVS_CREATE=false
 
-ENV PYTHONUNBUFFERED=1
+ENV PATH="$POETRY_HOME/bin:$PATH"
 
 WORKDIR /app
 
-COPY requirements.txt /app/
+RUN apt-get update && apt-get install -y \
+    catdoc \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
 
-RUN python -m pip install --upgrade pip==23.2.1
+RUN curl -sSL https://install.python-poetry.org | python3 -
 
-RUN pip install -r requirements.txt
+COPY pyproject.toml poetry.lock ./
 
-RUN apt-get update && apt-get install -y catdoc
+RUN poetry install --no-root --only main
 
 RUN python -m spacy download en_core_web_sm && \
     python -m spacy download ru_core_news_sm

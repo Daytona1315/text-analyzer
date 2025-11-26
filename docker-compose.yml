@@ -20,6 +20,8 @@ services:
   redis:
     image: redis:7.4-alpine
     container_name: "redis"
+    volumes:
+      - redis_data:/data
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 30s
@@ -61,3 +63,6 @@ services:
 
 networks:
   appnet:
+
+volumes:
+  redis_data:

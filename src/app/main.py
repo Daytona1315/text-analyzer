@@ -6,11 +6,11 @@ from flask import (
 )
 from flask_session import Session
 
-from src.celery.celery_init import celery_init_app
+from src.celery.init import celery_init_app
 from src.app.error_handlers import register_error_handlers
 from src.app.services.nlp import NLPModels
 from src.app.utils.config import Config
-from src.db.redis_client import get_redis_connection
+from src.db.redis.client import get_redis_connection
 
 
 def create_app():
@@ -38,9 +38,12 @@ def create_app():
 
     # redis
     app.config["SESSION_TYPE"] = "redis"
-    app.config["SESSION_REDIS"] = get_redis_connection(db=Config.redis_db, decode_responses=False)
+    app.config["SESSION_REDIS"] = get_redis_connection(
+        db=Config.redis_db, decode_responses=False
+    )
     Session(app)
     from src.app.services.redis import RedisService
+
     app.extensions["redis_service"] = RedisService()
 
     from src.app.blueprints.main_blueprint import main_blueprint

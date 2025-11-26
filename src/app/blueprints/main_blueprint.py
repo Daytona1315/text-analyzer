@@ -1,9 +1,11 @@
+from celery.result import AsyncResult
 from flask import (
     Blueprint,
     render_template,
     request,
     session,
     current_app,
+    make_response,
 )
 
 from src.app.utils.custom_exceptions import (
@@ -39,6 +41,20 @@ def upload_file():
     if not text or not text.strip():
         raise FileException()
     return TextService.provide_text_analysis(text)
+
+
+@main_blueprint.route("/status/<task_id>", methods=["GET"])
+def status_task(task_id: str):
+    task_result = AsyncResult(task_id)
+    if task_result.ready():
+        result = task_result.result
+        session["active_result"] = result["id"]
+        result_html = render_template("partials/result.html", result=result)
+        response = make_response(result_html)
+        response.headers["HX-Trigger"] = "historyNeedsUpdate"
+        return response
+    else:
+        return render_template("partials/processing.html", task_id=task_id)
 
 
 @main_blueprint.route("/result-by-id/<analysis_id>", methods=["GET"])

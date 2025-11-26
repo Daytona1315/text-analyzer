@@ -24,16 +24,11 @@ class TextService:
 
     @classmethod
     def provide_text_analysis(cls, text: str) -> Response:
+        from src.celery.tasks import analyze_text_task
+
         user_id: str = session["user_id"]
-        redis = current_app.extensions["redis_service"]
-        result = TextService.analyze_text(text)
-        redis.analysis_result_save(user_id, result)
-        result_html = render_template("partials/result.html", result=result)
-        response = make_response(result_html)
-        response.headers["HX-Trigger"] = "historyNeedsUpdate"
-        # adding current result in session for further operations
-        session["active_result"] = result["id"]
-        return response
+        task = analyze_text_task.delay(text, user_id)
+        return render_template("partials/processing.html", task_id=task.id)
 
     @classmethod
     def extract_text(cls, file_path: str, extension: str) -> str:

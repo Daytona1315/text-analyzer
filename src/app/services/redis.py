@@ -2,7 +2,7 @@ import json
 
 from redis import RedisError
 
-from src.db.redis_client import get_redis_connection
+from src.db.redis.client import get_redis_connection
 from src.app.utils.config import Config
 from src.app.utils.custom_exceptions import RedisException
 
@@ -13,7 +13,7 @@ class RedisService:
     """
 
     def __init__(self):
-        self.redis = get_redis_connection(db=1, decode_responses=True)
+        self.redis = get_redis_connection(db=Config.redis_db, decode_responses=True)
 
     def analysis_result_save(self, user_id: str, data: dict) -> None:
         p = self.redis.pipeline()

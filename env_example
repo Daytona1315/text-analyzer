@@ -1,0 +1,24 @@
+# --- App Settings ---
+SECRET_KEY=your_secret_key_here
+BASE_DIR=src/app
+UPLOAD_FOLDER=static/files
+ALLOWED_EXTENSIONS=txt,pdf,doc,docx
+MAX_FILE_SIZE=10485760
+
+# --- Session Settings ---
+SESSION_LIFETIME=300
+IS_SESSION_PERMANENT=False
+
+# --- Redis Settings ---
+REDIS_HOST=redis
+REDIS_PORT=6379
+REDIS_DB=0
+REDIS_MAX_COUNT=30
+REDIS_RECORD_EXPIRE=18000
+
+# --- Celery Settings ---
+CELERY_DB=2
+
+# --- NLP Settings ---
+NLP_LANGS=ru,en
+NLP_MODELS=en:en_core_web_sm,ru:ru_core_news_sm
