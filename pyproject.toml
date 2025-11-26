@@ -21,6 +21,7 @@ spacy = "^3.8.7"
 langid = "^1.1.6"
 colorlog = "^6.9.0"
 python-dotenv = "^1.2.1"
+supervisor = "^4.3.0"
 
 [build-system]
 requires = ["poetry-core"]
