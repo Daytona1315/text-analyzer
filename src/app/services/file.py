@@ -5,7 +5,6 @@ from flask import (
     Request,
     session,
 )
-from werkzeug.utils import secure_filename
 
 from src.app.utils.config import Config
 from src.app.utils.custom_exceptions import (
@@ -48,12 +47,13 @@ class FileService:
             )
         if file and FileService.allowed_file(file.filename):
             user_id: str = session["user_id"]
-            filename: str = f"{user_id}_{secure_filename(file.filename)}"
+            _, ext = os.path.splitext(file.filename)
+            extension = ext.lower()
+            filename: str = f"{user_id}{extension}"
             file_path: str = (
                 Config.base_dir + "/" + Config.upload_folder + "/" + filename
             )
             file.save(file_path)
-            extension: str = os.path.splitext(filename)[1].lower()
             return file_path, extension
         raise FileException(status=422, message=f"Unsupported file type.")
 

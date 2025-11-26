@@ -6,6 +6,7 @@ from src.app.services.text import TextService
 
 logger = get_task_logger(__name__)
 
+
 @shared_task(ignore_result=False)
 def analyze_text_task(text: str, user_id: str):
     try:
@@ -16,5 +17,5 @@ def analyze_text_task(text: str, user_id: str):
         logger.info(f"🏁 [Worker] FINISHED task successfully")
         return result
     except Exception as e:
-            logger.error(f"🔥 [Worker] FAILED task: {e}", exc_info=True) # <--- Лог ошибки
-            raise e
+        logger.error(f"🔥 [Worker] FAILED task: {e}", exc_info=True)  # <--- Лог ошибки
+        raise e

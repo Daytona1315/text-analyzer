@@ -16,6 +16,7 @@ class NLPModels:
     Manages NLP models with Lazy Loading pattern.
     Models are loaded into memory only upon first request.
     """
+
     models = {}
 
     @classmethod
@@ -28,7 +29,7 @@ class NLPModels:
                 return None
 
             try:
-                cls.models[lang] = spacy.load(model_name, disable=['parser', 'ner'])
+                cls.models[lang] = spacy.load(model_name, disable=["parser", "ner"])
             except Exception as e:
                 raise NLPException(exception=e)
 

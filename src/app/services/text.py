@@ -22,6 +22,7 @@ class TextService:
     @classmethod
     def provide_text_analysis(cls, text: str) -> str:
         from src.broker.tasks import analyze_text_task
+
         user_id: str = session["user_id"]
 
         log.info(f"🚀 [Flask] Preparing to send task for User: {user_id}")
