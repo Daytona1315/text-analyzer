@@ -54,6 +54,8 @@ def create_app():
     app.register_blueprint(history_blueprint)
     app.register_blueprint(functions_blueprint)
 
+    import src.broker.tasks
+
     # 'before request' section
     @app.before_request
     def make_session_permanent() -> None:
