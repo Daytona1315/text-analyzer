@@ -15,6 +15,7 @@ from src.app.utils.custom_exceptions import (
 from src.app.services.text import TextService
 from src.app.services.file import FileService
 from src.app.utils.logging import log
+from src.app.consts import SessionKeys, HtmxEvents, TaskStatus
 
 main_blueprint = Blueprint(
     name="main",
@@ -24,7 +25,7 @@ main_blueprint = Blueprint(
 
 @main_blueprint.route("/", methods=["GET"])
 def root():
-    session["init"] = True
+    session[SessionKeys.INIT] = True
     return render_template("index.html")
 
 
@@ -46,14 +47,14 @@ def upload_file():
 @main_blueprint.route("/status/<task_id>", methods=["GET"])
 def task_status(task_id: str):
     task_result = AsyncResult(task_id)
-    if task_result.successful():
+    if task_result.state == TaskStatus.SUCCESS:
         result = task_result.result
-        session["active_analysis_id"] = result["id"]
+        session[SessionKeys.ACTIVE_ANALYSIS_ID] = result["id"]
         result_html = render_template("partials/result.html", result=result)
         response = make_response(result_html)
-        response.headers["HX-Trigger"] = "historyNeedsUpdate"
+        response.headers["HX-Trigger"] = HtmxEvents.HISTORY_UPDATE
         return response
-    elif task_result.failed():
+    elif task_result.state == TaskStatus.FAILURE:
         error_msg = str(task_result.result)
         log.error(error_msg)
         return render_template(
@@ -66,9 +67,9 @@ def task_status(task_id: str):
 @main_blueprint.route("/result-by-id/<analysis_id>", methods=["GET"])
 def get_result_by_id(analysis_id: str):
     redis = current_app.extensions["redis_service"]
-    user_id: str = session["user_id"]
+    user_id: str = session[SessionKeys.USER_ID]
     result: dict = redis.analysis_result_get(user_id, analysis_id)
-    session["active_analysis_id"] = analysis_id
+    session[SessionKeys.ACTIVE_ANALYSIS_ID] = analysis_id
     if result:
         return render_template("partials/result.html", result=result)
     raise RedisException()

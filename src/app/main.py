@@ -6,6 +6,7 @@ from flask import (
 )
 from flask_session import Session
 
+from src.app.consts import SessionKeys
 from src.broker.celery_init import celery_init_app
 from src.app.error_handlers import register_error_handlers
 from src.app.utils.config import Config
@@ -69,7 +70,7 @@ def create_app():
         It is placed in session, other private values
         may be added there also.
         """
-        if "user_id" not in session:
-            session["user_id"] = str(uuid.uuid4())
+        if SessionKeys.USER_ID not in session:
+            session[SessionKeys.USER_ID] = str(uuid.uuid4())
 
     return app

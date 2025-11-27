@@ -9,6 +9,7 @@ from flask import (
     session,
     render_template,
 )
+from src.app.consts import SessionKeys
 from src.app.utils.custom_exceptions import TextAnalysisException
 from src.app.utils.custom_exceptions import FileException
 
@@ -22,7 +23,7 @@ class TextService:
     def provide_text_analysis(cls, text: str) -> str:
         from src.broker.tasks import analyze_text_task
 
-        user_id: str = session["user_id"]
+        user_id: str = session[SessionKeys.USER_ID]
         task = analyze_text_task.delay(text, user_id)
 
         return render_template("partials/processing.html", task_id=task.id)

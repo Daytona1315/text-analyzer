@@ -6,6 +6,7 @@ from flask import (
     session,
 )
 
+from src.app.consts import SessionKeys
 from src.app.utils.config import Config
 from src.app.utils.custom_exceptions import (
     BaseAppException,
@@ -46,7 +47,7 @@ class FileService:
                 message="Filename is empty. Please, choose the correct file.",
             )
         if file and FileService.allowed_file(file.filename):
-            user_id: str = session["user_id"]
+            user_id: str = session[SessionKeys.USER_ID]
             _, ext = os.path.splitext(file.filename)
             extension = ext.lower()
             filename: str = f"{user_id}{extension}"
@@ -59,7 +60,7 @@ class FileService:
 
     @classmethod
     def write_csv(cls, text: list) -> str:
-        user_id: str = session["user_id"]
+        user_id: str = session[SessionKeys.USER_ID]
         filename: str = f"{user_id}_file.csv"
         abs_path: str = os.path.join(Config.base_dir, Config.upload_folder, filename)
         try:

@@ -6,6 +6,8 @@ from flask import (
     render_template,
 )
 
+from src.app.consts import SessionKeys, HtmxEvents
+
 history_blueprint = Blueprint(
     name="history",
     import_name=__name__,
@@ -15,7 +17,7 @@ history_blueprint = Blueprint(
 @history_blueprint.route("/history", methods=["GET"])
 def get_history():
     redis = current_app.extensions["redis_service"]
-    user_id: str = session["user_id"]
+    user_id: str = session[SessionKeys.USER_ID]
     history = redis.analysis_history_get(user_id)
     if len(history) == 0:
         history = None
@@ -26,8 +28,8 @@ def get_history():
 @history_blueprint.route("/history", methods=["DELETE"])
 def clear_history():
     redis = current_app.extensions["redis_service"]
-    user_id: str = session["user_id"]
+    user_id: str = session[SessionKeys.USER_ID]
     redis.analysis_result_clear(user_id)
     response = make_response("")
-    response.headers["HX-Trigger"] = "historyNeedsUpdate"
+    response.headers["HX-Trigger"] = HtmxEvents.HISTORY_UPDATE
     return response
