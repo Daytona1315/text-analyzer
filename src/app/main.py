@@ -28,8 +28,8 @@ def create_app():
         CELERY=dict(
             broker_url=Config.celery_broker_url,
             result_backend=Config.celery_result_backend,
-            task_ignore_result=False,
             include=["src.broker.tasks"],
+            task_ignore_result=False,
         )
     )
     celery_init_app(app)
@@ -46,7 +46,7 @@ def create_app():
 
     from src.app.blueprints.main_blueprint import main_blueprint
     from src.app.blueprints.history_blueprint import history_blueprint
-    from src.app.blueprints.functions_bluprint import functions_blueprint
+    from src.app.blueprints.analytics_blueprint import functions_blueprint
 
     app.register_blueprint(main_blueprint)
     app.register_blueprint(history_blueprint)

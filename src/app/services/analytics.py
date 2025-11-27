@@ -1,25 +1,37 @@
+from flask import current_app, session
 from wordcloud import WordCloud
 
+from src.app.consts import SessionKeys
 from src.app.services.nlp import (
     detect_language,
     NLPModels,
 )
 from src.app.utils.custom_exceptions import (
-    FunctionsException,
     NLPException,
+    AnalyticsException,
 )
 from src.app.utils.config import Config
 
 
-class FunctionsService:
+class AnalyticsService:
     """
     Contains methods for complex operations.
     """
 
-    def __init__(self, redis, user_id, analysis_result):
-        self.redis = redis
-        self.user_id = user_id
+    def __init__(self, analysis_result: dict) -> None:
         self.analysis_result = analysis_result
+
+    @classmethod
+    def create_from_session(cls):
+        redis_service = current_app.extensions["redis_service"]
+        user_id = session.get(SessionKeys.USER_ID)
+        analysis_id = session.get(SessionKeys.ACTIVE_ANALYSIS_ID)
+        if not user_id or not analysis_id:
+            raise AnalyticsException()
+        analysis_result = redis_service.analysis_result_get(user_id, analysis_id)
+        if not analysis_result:
+            raise AnalyticsException()
+        return cls(analysis_result)
 
     def generate_word_cloud(self) -> str:
         raw_words: list = self.analysis_result["lists"]["words"]
@@ -34,7 +46,7 @@ class FunctionsService:
             svg = wc.to_svg()
             return svg
         except Exception as e:
-            raise FunctionsException(exception=e)
+            raise AnalyticsException(exception=e)
 
     def generate_lemmatization(self) -> list:
         text = " ".join(self.analysis_result["lists"]["words"])

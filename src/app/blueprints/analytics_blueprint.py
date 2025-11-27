@@ -3,9 +3,9 @@ from flask import (
     render_template,
 )
 
+from src.app.services.analytics import AnalyticsService
 from src.app.utils.custom_exceptions import BaseAppException
 from src.app.services.file import FileService
-from src.app.utils.decorators import inject_functions_service
 
 functions_blueprint = Blueprint(
     name="functions",
@@ -14,10 +14,10 @@ functions_blueprint = Blueprint(
 
 
 @functions_blueprint.route("/word-cloud", methods=["GET"])
-@inject_functions_service
-def word_cloud(functions_service):
+def word_cloud():
     try:
-        svg: str = functions_service.generate_word_cloud()
+        service = AnalyticsService.create_from_session()
+        svg: str = service.generate_word_cloud()
         return render_template(
             "partials/word-cloud.html",
             svg=svg,
@@ -27,10 +27,10 @@ def word_cloud(functions_service):
 
 
 @functions_blueprint.route("/lemmatization", methods=["GET"])
-@inject_functions_service
-def lemmatization(functions_service):
+def lemmatization():
     try:
-        result: list = functions_service.generate_lemmatization()
+        service = AnalyticsService.create_from_session()
+        result: list = service.generate_lemmatization()
         path = FileService.write_csv(result)
     except BaseAppException as e:
         return render_template("partials/error.html", message=e.message)

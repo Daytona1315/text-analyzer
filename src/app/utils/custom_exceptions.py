@@ -42,7 +42,7 @@ class RedisException(BaseAppException):
     default_message = "Operation not found. Please, try later."
 
 
-class FunctionsException(BaseAppException):
+class AnalyticsException(BaseAppException):
     default_message = "Failed to process. Please, try later."
 
 
