@@ -57,6 +57,7 @@ def task_status(task_id: str):
         result_html = render_template("partials/result.html", result=result)
         response = make_response(result_html)
         response.headers["HX-Trigger"] = HtmxEvents.HISTORY_UPDATE
+        response.headers["HX-Scroll"] = "#result:bottom"
         return response
     elif task_result.state == TaskStatus.FAILURE:
         error_msg = str(task_result.result)
