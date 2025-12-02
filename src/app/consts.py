@@ -22,3 +22,15 @@ class TaskStatus(StrEnum):
     PENDING = "PENDING"
     STARTED = "STARTED"
     RETRY = "RETRY"
+
+
+class ExceptionMessages(StrEnum):
+    """Exception messages"""
+
+    default_exception_msg = "Something went wrong. Please, try later."
+    file_exception_msg = "Failed to process the file. Please, try later."
+    analysis_exception_msg = "Failed to run the analysis. Please, try later."
+    csv_exception_msg = "Failed to process the .csv file. Please, try later."
+    redis_exception_msg = "Operation not found. Please, try again later."
+    analytics_exception_msg = "Failed to run the analytics. Please, try later."
+    nlp_exception_msg = "Failed to load necessary components. Please, try later."

@@ -1,6 +1,10 @@
+import logging
+
 from celery import shared_task
 from celery.utils.log import get_task_logger
 from flask import current_app
+
+from src.app.utils.logging import log
 from src.app.services.text import TextService
 
 
@@ -15,4 +19,5 @@ def analyze_text_task(text: str, user_id: str):
         redis_service.analysis_result_save(user_id, result)
         return result
     except Exception as e:
+        log.ERROR("Task error: ", e)
         raise e

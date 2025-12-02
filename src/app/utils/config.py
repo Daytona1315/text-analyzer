@@ -33,7 +33,8 @@ class Config:
         )
         if not nlp_models:
             raise ValueError
-    except Exception:
+    except Exception as e:
+        log.ERROR("NLP_MODELS EROR: ", e)
         nlp_models = {"ru": "ru_core_news_sm", "en": "en_core_web_sm"}
 
     # Redis
