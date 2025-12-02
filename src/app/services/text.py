@@ -41,6 +41,7 @@ class TextService:
             chars_no_spaces_count = len(text) - whitespace_count
             result = {
                 "id": str(uuid.uuid4()),
+                "text": text,
                 "short_preview": text[:40] + "..." if len(text) > 140 else text,
                 "preview": text[:140] + "..." if len(text) > 140 else text,
                 "metrics": {

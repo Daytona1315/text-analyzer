@@ -29,7 +29,7 @@ class NLPModels:
                 return None
 
             try:
-                cls.models[lang] = spacy.load(model_name, disable=["parser", "ner"])
+                cls.models[lang] = spacy.load(model_name, disable=["parser"])
             except Exception as e:
                 raise NLPException(exception=e)
 

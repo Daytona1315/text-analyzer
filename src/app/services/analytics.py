@@ -1,16 +1,18 @@
+import spacy
 from flask import current_app, session
 from wordcloud import WordCloud
 
-from src.app.consts import SessionKeys
+from src.app.consts import SessionKeys, ExceptionMessages
 from src.app.services.nlp import (
     detect_language,
     NLPModels,
 )
 from src.app.utils.custom_exceptions import (
     NLPException,
-    AnalyticsException,
+    AnalyticsException, LangException,
 )
 from src.app.utils.config import Config
+from src.app.utils.logging import log
 
 
 class AnalyticsService:
@@ -61,3 +63,28 @@ class AnalyticsService:
             return [t.lemma_ for t in doc if not t.is_punct and not t.is_space]
         except Exception as e:
             raise NLPException(exception=e)
+
+    def generate_ner(self) -> str:
+
+        text = self.analysis_result.get("text", "")
+        if not text:
+            raise AnalyticsException()
+
+        lang = detect_language(text)
+        if lang not in Config.nlp_langs:
+            raise LangException()
+
+        nlp = NLPModels.get(lang)
+        if not nlp:
+            raise NLPException()
+        if len(text) > 1000000:
+            text = text[:1000000]
+
+        doc = nlp(text)
+
+        try:
+            html = spacy.displacy.render(doc, style="ent", page=False)
+            return html
+        except Exception as e:
+            log.ERROR("ERROR WHILE NER: ", e)
+            raise AnalyticsException()
