@@ -46,11 +46,11 @@ def create_app():
 
     from src.app.blueprints.main_blueprint import main_blueprint
     from src.app.blueprints.history_blueprint import history_blueprint
-    from src.app.blueprints.analytics_blueprint import functions_blueprint
+    from src.app.blueprints.analytics_blueprint import analytics_blueprint
 
     app.register_blueprint(main_blueprint)
     app.register_blueprint(history_blueprint)
-    app.register_blueprint(functions_blueprint)
+    app.register_blueprint(analytics_blueprint)
 
     # 'before request' section
     @app.before_request

@@ -7,13 +7,14 @@ from src.app.services.analytics import AnalyticsService
 from src.app.utils.custom_exceptions import BaseAppException
 from src.app.services.file import FileService
 
-functions_blueprint = Blueprint(
+
+analytics_blueprint = Blueprint(
     name="functions",
     import_name=__name__,
 )
 
 
-@functions_blueprint.route("/word-cloud", methods=["GET"])
+@analytics_blueprint.route("/word-cloud", methods=["GET"])
 def word_cloud():
     try:
         service = AnalyticsService.create_from_session()
@@ -26,7 +27,7 @@ def word_cloud():
         return render_template("partials/error.html", message=e.message)
 
 
-@functions_blueprint.route("/lemmatization", methods=["GET"])
+@analytics_blueprint.route("/lemmatization", methods=["GET"])
 def lemmatization():
     try:
         service = AnalyticsService.create_from_session()
@@ -38,3 +39,12 @@ def lemmatization():
         "partials/lemmatization.html",
         path=path,
     )
+
+@analytics_blueprint.route("/ner", methods=["GET"])
+def ner():
+    try:
+        service = AnalyticsService.create_from_session()
+        html: str = service.generate_ner()
+        return render_template("partials/ner.html", html=html)
+    except BaseAppException as e:
+        return render_template("partials/error.html", message=e.message)
