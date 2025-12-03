@@ -19,5 +19,5 @@ def analyze_text_task(text: str, user_id: str):
         redis_service.analysis_result_save(user_id, result)
         return result
     except Exception as e:
-        log.ERROR("Task error: ", e)
+        log.error("Task error: ", e)
         raise e

@@ -50,5 +50,6 @@ class AnalyticsException(BaseAppException):
 class NLPException(BaseAppException):
     default_message = ExceptionMessages.nlp_exception_msg
 
+
 class LangException(BaseAppException):
     default_message = ExceptionMessages.lang_exception_msg

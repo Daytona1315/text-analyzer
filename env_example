@@ -20,5 +20,7 @@ REDIS_RECORD_EXPIRE=18000
 CELERY_DB=2
 
 # --- NLP Settings ---
+NLP_MAX_LENGTH=1000000
+NLP_WORD_MIN_LENGTH=2
 NLP_LANGS=ru,en
 NLP_MODELS=en:en_core_web_sm,ru:ru_core_news_sm

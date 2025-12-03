@@ -39,10 +39,7 @@ def analyze_text():
 @main_blueprint.route("/upload", methods=["POST"])
 def upload_file():
     file_path, extension = FileService.load_file(request)
-    text = DocumentService.read_content(
-        file_path=file_path,
-        extension=extension
-    )
+    text = DocumentService.read_content(file_path=file_path, extension=extension)
     if not text or not text.strip():
         raise FileException()
     return TextService.provide_text_analysis(text)
@@ -57,7 +54,6 @@ def task_status(task_id: str):
         result_html = render_template("partials/result.html", result=result)
         response = make_response(result_html)
         response.headers["HX-Trigger"] = HtmxEvents.HISTORY_UPDATE
-        response.headers["HX-Scroll"] = "#result:top"
         return response
     elif task_result.state == TaskStatus.FAILURE:
         error_msg = str(task_result.result)

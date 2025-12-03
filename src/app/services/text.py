@@ -17,6 +17,7 @@ class TextService:
     @classmethod
     def provide_text_analysis(cls, text: str) -> str:
         from src.broker.tasks import analyze_text_task
+
         user_id: str = session[SessionKeys.USER_ID]
         task = analyze_text_task.delay(text, user_id)
         return render_template("partials/processing.html", task_id=task.id)

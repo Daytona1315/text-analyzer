@@ -40,6 +40,7 @@ def lemmatization():
         path=path,
     )
 
+
 @analytics_blueprint.route("/ner", methods=["GET"])
 def ner():
     try:

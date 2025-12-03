@@ -26,6 +26,8 @@ class Config:
     # NLP
     _nlp_langs_raw = os.getenv("NLP_LANGS", "ru,en")
     nlp_langs: list = _nlp_langs_raw.split(",")
+    nlp_max_length: int = int(os.getenv("NLP_MAX_LENGTH", 1000000))
+    nlp_word_min_length: int = int(os.getenv("NLP_WORD_MIN_LENGTH", 2))
     nlp_models_raw = os.getenv("NLP_MODELS", "en:en_core_web_sm,ru:ru_core_news_sm")
     try:
         nlp_models = dict(
@@ -34,7 +36,7 @@ class Config:
         if not nlp_models:
             raise ValueError
     except Exception as e:
-        log.ERROR("NLP_MODELS EROR: ", e)
+        log.error("NLP_MODELS ERROR: ", e)
         nlp_models = {"ru": "ru_core_news_sm", "en": "en_core_web_sm"}
 
     # Redis
